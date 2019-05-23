@@ -1,8 +1,7 @@
 package com.example.database.comparison
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import com.example.database.comparison.room.db.AppRoomDatabase
 import com.example.database.comparison.room.model.Person
@@ -23,14 +22,9 @@ class MainActivity : AppCompatActivity() {
             .build()
             .personDao()
 
-        // TODO System or SystemClock
-        val startTime = System.currentTimeMillis()
-
         val person = Person(firstName = "", secondsName = "")
-        roomDao.insertInTx(listOf(person))
 
-        val testTime = System.currentTimeMillis() - startTime
+        TestRunner().run(TAG) { roomDao.insertInTx(listOf(person)) }
 
-        Log.d(TAG, testTime.toString())
     }
 }
