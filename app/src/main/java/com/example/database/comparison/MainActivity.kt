@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import com.example.database.comparison.room.db.AppRoomDatabase
-import com.example.database.comparison.room.model.Person
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,12 +21,14 @@ class MainActivity : AppCompatActivity() {
             .build()
             .personDao()
 
-        val person = Person(firstName = "", secondsName = "")
-
         val logger = Logger()
         val runner = TestRunner(logger)
+        val dataProvider = DataProvider()
 
-        runner.run(TAG) { roomDao.insertInTx(listOf(person)) }
+        val persons = dataProvider.getPersons(10000)
+
+        roomDao.deleteAll()
+        runner.run(TAG) { roomDao.insertInTx(persons) }
 
     }
 }

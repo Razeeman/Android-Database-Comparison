@@ -18,4 +18,7 @@ interface PersonDao {
     @Delete
     fun deleteInTx(persons: List<Person>)
 
+    @Query("DELETE FROM persons")
+    fun deleteAll()
+
 }
