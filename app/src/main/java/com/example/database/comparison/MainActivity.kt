@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         val startTime = System.currentTimeMillis()
 
         val person = Person(firstName = "", secondsName = "")
-        roomDao.insert(person)
+        roomDao.insertInTx(listOf(person))
 
         val testTime = System.currentTimeMillis() - startTime
 

@@ -7,15 +7,15 @@ import com.example.database.comparison.room.model.Person
 interface PersonDao {
 
     @Insert
-    fun insert(person: Person)
+    fun insertInTx(persons: List<Person>)
 
-    @Query("SELECT * FROM persons WHERE id LIKE :personId")
-    fun getById(personId: Long): Person
+    @Query("SELECT * FROM persons")
+    fun getAll(): List<Person>
 
     @Update
-    fun update(person: Person)
+    fun updateInTx(persons: List<Person>)
 
     @Delete
-    fun delete(person: Person)
+    fun deleteInTx(persons: List<Person>)
 
 }
