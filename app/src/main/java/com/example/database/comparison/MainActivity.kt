@@ -24,7 +24,10 @@ class MainActivity : AppCompatActivity() {
 
         val person = Person(firstName = "", secondsName = "")
 
-        TestRunner().run(TAG) { roomDao.insertInTx(listOf(person)) }
+        val logger = Logger()
+        val runner = TestRunner(logger)
+
+        runner.run(TAG) { roomDao.insertInTx(listOf(person)) }
 
     }
 }
