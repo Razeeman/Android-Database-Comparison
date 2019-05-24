@@ -2,6 +2,7 @@ package com.example.database.comparison
 
 import com.example.database.comparison.greendao.model.PersonGreen
 import com.example.database.comparison.model.Person
+import com.example.database.comparison.realm.model.PersonRealm
 import com.example.database.comparison.room.model.PersonRoom
 
 class DataTransformer private constructor() {
@@ -29,6 +30,18 @@ class DataTransformer private constructor() {
 
         fun toPersonsGreendao(persons: List<Person>): List<PersonGreen> {
             return persons.map { toPersonGreendao(it) }
+        }
+
+        fun toPersonRealm(person: Person): PersonRealm {
+            return PersonRealm(
+                person.firstName,
+                person.secondsName,
+                person.age
+            )
+        }
+
+        fun toPersonsRealm(persons: List<Person>): List<PersonRealm> {
+            return persons.map { toPersonRealm(it) }
         }
 
     }
