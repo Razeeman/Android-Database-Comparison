@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         val persons = dataProvider.getPersons(10000)
 
         roomDao.deleteAll()
-        runner.run(TAG) { roomDao.insertInTx(persons) }
+        runner.run("Room-insert") { roomDao.insertInTx(persons) }
 
     }
 }

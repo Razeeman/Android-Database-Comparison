@@ -1,6 +1,6 @@
 package com.example.database.comparison
 
-class TestRunner(val logger: Logger) {
+class TestRunner(private val logger: Logger) {
 
     /**
      * Executes given code, measured its running time and log it.
@@ -13,7 +13,7 @@ class TestRunner(val logger: Logger) {
         func()
 
         val finishTime = System.currentTimeMillis()
-        logger.log(identification, startTime, finishTime)
+        logger.log(identification, finishTime - startTime)
     }
 
 }
