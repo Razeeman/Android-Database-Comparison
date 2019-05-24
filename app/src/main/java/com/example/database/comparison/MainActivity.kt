@@ -7,6 +7,7 @@ import com.example.database.comparison.greendao.model.DaoMaster
 import com.example.database.comparison.realm.model.PersonRealm
 import com.example.database.comparison.room.db.AppRoomDatabase
 import io.realm.Realm
+import io.realm.RealmConfiguration
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,7 +32,11 @@ class MainActivity : AppCompatActivity() {
             .personGreenDao
 
         Realm.init(this)
-        val realm = Realm.getDefaultInstance()
+        val realm = Realm.getInstance(RealmConfiguration
+            .Builder()
+            .deleteRealmIfMigrationNeeded()
+            .build()
+        )
 
         val logger = Logger()
         val runner = TestRunner(logger)
@@ -42,10 +47,6 @@ class MainActivity : AppCompatActivity() {
         val personsGreendao = DataTransformer.toPersonsGreendao(persons)
         val personsRealm = DataTransformer.toPersonsRealm(persons)
 
-        realm.beginTransaction()
-        realm.copyToRealm(personsRealm)
-        realm.commitTransaction()
-
         runner
             .before { roomDao.deleteAll() }
             .run("Room-insert", runs = 10) { roomDao.insertInTx(personsRoom) }
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             .run("Greendao-insert", runs = 10) { greenDao.insertInTx(personsGreendao) }
 
         runner
-            .before { realm.delete(PersonRealm::class.java) }
+            .before { realm.executeTransaction { it.delete(PersonRealm::class.java) } }
             .run("Realm-insert", runs = 10) {
                 realm.executeTransaction { it.copyToRealm(personsRealm) }
             }

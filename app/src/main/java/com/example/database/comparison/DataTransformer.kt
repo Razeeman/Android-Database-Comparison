@@ -41,7 +41,9 @@ class DataTransformer private constructor() {
         }
 
         fun toPersonsRealm(persons: List<Person>): List<PersonRealm> {
-            return persons.map { toPersonRealm(it) }
+            return persons.map { toPersonRealm(it).also {
+                    personRealm -> personRealm.id = PersonRealm.objectCounter }
+            }
         }
 
     }
