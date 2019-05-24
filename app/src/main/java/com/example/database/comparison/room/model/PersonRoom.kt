@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "persons")
-data class Person (
+data class PersonRoom (
     @ColumnInfo(name = "first_name") var firstName: String,
     @ColumnInfo(name = "seconds_name") var secondsName: String,
     @ColumnInfo(name = "age") var age: Int

@@ -20,27 +20,27 @@ class MainActivity : AppCompatActivity() {
             AppRoomDatabase::class.java, "room-database")
             .allowMainThreadQueries()
             .build()
-            .personDao()
+            .personRoomDao()
 
         val greenDao = DaoMaster(DaoMaster
             .DevOpenHelper(this, "greendao-database")
             .writableDb)
             .newSession()
-            .personDao
+            .personGreenDao
 
         val logger = Logger()
         val runner = TestRunner(logger)
         val dataProvider = DataProvider()
 
         val persons = dataProvider.getPersons(1000)
-        val roomPersons = DataTransformers.toRoomPersons(persons)
-        val greendaoPersons = DataTransformers.toGreendaoPersons(persons)
+        val personsRoom = DataTransformer.toPersonsRoom(persons)
+        val personsGreendao = DataTransformer.toPersonsGreendao(persons)
 
         roomDao.deleteAll()
-        runner.run("Room-insert", 10) { roomDao.insertInTx(roomPersons) }
+        runner.run("Room-insert", 10) { roomDao.insertInTx(personsRoom) }
 
         greenDao.deleteAll()
-        runner.run("Greendao-insert", 10) { greenDao.insertInTx(greendaoPersons) }
+        runner.run("Greendao-insert", 10) { greenDao.insertInTx(personsGreendao) }
 
     }
 }

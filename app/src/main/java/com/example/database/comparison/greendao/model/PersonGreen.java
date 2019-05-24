@@ -6,7 +6,7 @@ import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity(nameInDb = "person")
-public class Person {
+public class PersonGreen {
 
     @Id(autoincrement = true)
     private Long id;
@@ -20,22 +20,22 @@ public class Person {
     @Property(nameInDb = "age")
     private int age;
 
-    public Person(String firstName, String secondName, int age) {
+    public PersonGreen(String firstName, String secondName, int age) {
         this.firstName = firstName;
         this.secondName = secondName;
         this.age = age;
     }
 
-    @Generated(hash = 763899716)
-    public Person(Long id, String firstName, String secondName, int age) {
+    @Generated(hash = 2003878665)
+    public PersonGreen(Long id, String firstName, String secondName, int age) {
         this.id = id;
         this.firstName = firstName;
         this.secondName = secondName;
         this.age = age;
     }
 
-    @Generated(hash = 1024547259)
-    public Person() {
+    @Generated(hash = 1121170119)
+    public PersonGreen() {
     }
 
     public Long getId() {
