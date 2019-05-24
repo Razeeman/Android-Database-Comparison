@@ -19,6 +19,13 @@ class DataProvider {
     private val random = Random()
 
     /**
+     * Provides random integer.
+     */
+    fun getInt(bound: Int = 1000): Int {
+        return random.nextInt(bound)
+    }
+
+    /**
      * Provides random alphanumeric string.
      */
     fun getString(len: Int = 10): String {
@@ -33,7 +40,7 @@ class DataProvider {
      * Provides random person.
      */
     fun getPerson(): Person {
-        return Person(getString(), getString())
+        return Person(getString(), getString(), getInt())
     }
 
     /**
