@@ -3,6 +3,7 @@ package com.example.database.comparison
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
+import com.example.database.comparison.greendao.model.DaoMaster
 import com.example.database.comparison.room.db.AppRoomDatabase
 
 class MainActivity : AppCompatActivity() {
@@ -21,14 +22,25 @@ class MainActivity : AppCompatActivity() {
             .build()
             .personDao()
 
+        val greenDao = DaoMaster(DaoMaster
+            .DevOpenHelper(this, "greendao-database")
+            .writableDb)
+            .newSession()
+            .personDao
+
         val logger = Logger()
         val runner = TestRunner(logger)
         val dataProvider = DataProvider()
 
-        val persons = dataProvider.getPersons(10000)
+        val persons = dataProvider.getPersons(1000)
+        val roomPersons = DataTransformers.toRoomPersons(persons)
+        val greendaoPersons = DataTransformers.toGreendaoPersons(persons)
 
         roomDao.deleteAll()
-        runner.run("Room-insert", 10) { roomDao.insertInTx(persons) }
+        runner.run("Room-insert", 10) { roomDao.insertInTx(roomPersons) }
+
+        greenDao.deleteAll()
+        runner.run("Greendao-insert", 10) { greenDao.insertInTx(greendaoPersons) }
 
     }
 }

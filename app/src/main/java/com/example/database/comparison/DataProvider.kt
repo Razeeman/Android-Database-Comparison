@@ -1,6 +1,6 @@
 package com.example.database.comparison
 
-import com.example.database.comparison.room.model.Person
+import com.example.database.comparison.model.Person
 import java.util.*
 import kotlin.collections.ArrayList
 
