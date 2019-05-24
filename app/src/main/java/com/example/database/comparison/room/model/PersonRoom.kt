@@ -10,5 +10,7 @@ data class PersonRoom (
     @ColumnInfo(name = "seconds_name") var secondsName: String,
     @ColumnInfo(name = "age") var age: Int
 ) {
+
     @PrimaryKey(autoGenerate = true) var id: Long = 0
+
 }

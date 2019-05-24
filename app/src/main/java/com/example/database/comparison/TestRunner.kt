@@ -15,7 +15,7 @@ class TestRunner(private val logger: Logger) {
     /**
      * Executes given code, measured its running time and log it.
      */
-    fun run(identification: String, runs: Int = 1, func: () -> Unit) {
+    fun run(name: String, runs: Int = 1, func: () -> Unit) {
         val runTimes = LongArray(runs)
 
         for (i in 0 until runs) {
@@ -31,7 +31,7 @@ class TestRunner(private val logger: Logger) {
 
         val averageRunTime = runTimes.sum() / runs
 
-        logger.log(identification, averageRunTime)
+        logger.log(name, averageRunTime)
     }
 
 }

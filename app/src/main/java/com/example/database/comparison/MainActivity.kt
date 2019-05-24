@@ -48,12 +48,12 @@ class MainActivity : AppCompatActivity() {
         val personsRealm = DataTransformer.toPersonsRealm(persons)
 
         runner
-            .before { roomDao.deleteAll() }
-            .run("Room-insert", runs = 10) { roomDao.insertInTx(personsRoom) }
-
-        runner
             .before { greenDao.deleteAll() }
             .run("Greendao-insert", runs = 10) { greenDao.insertInTx(personsGreendao) }
+
+        runner
+            .before { roomDao.deleteAll() }
+            .run("Room-insert", runs = 10) { roomDao.insertInTx(personsRoom) }
 
         runner
             .before { realm.executeTransaction { it.delete(PersonRealm::class.java) } }

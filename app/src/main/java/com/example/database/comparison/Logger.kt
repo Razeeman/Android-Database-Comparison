@@ -11,8 +11,8 @@ class Logger {
     /**
      * Logs time with identification message.
      */
-    fun log(identification: String, time: Long) {
-        Log.d(TAG, "$identification, measured time: $time ms")
+    fun log(name: String, time: Long) {
+        Log.d(TAG, "$name, measured time: $time ms")
     }
 
 }
