@@ -48,17 +48,40 @@ class MainActivity : AppCompatActivity() {
         val personsRealm = DataTransformer.toPersonsRealm(persons)
 
         runner
-            .before { greenDao.deleteAll() }
+            .beforeEach { greenDao.deleteAll() }
             .run("Greendao-insert", runs = 10) { greenDao.insertInTx(personsGreendao) }
 
         runner
-            .before { roomDao.deleteAll() }
+            .beforeEach { roomDao.deleteAll() }
             .run("Room-insert", runs = 10) { roomDao.insertInTx(personsRoom) }
 
         runner
-            .before { realm.executeTransaction { it.delete(PersonRealm::class.java) } }
+            .beforeEach { realm.executeTransaction { it.delete(PersonRealm::class.java) } }
             .run("Realm-insert", runs = 10) {
                 realm.executeTransaction { it.copyToRealm(personsRealm) }
+            }
+
+        runner
+            .before {
+                greenDao.deleteAll()
+                greenDao.insertInTx(personsGreendao)
+            }
+            .run("Greendao-read", runs = 10) { greenDao.loadAll() }
+
+        runner
+            .before {
+                roomDao.deleteAll()
+                roomDao.insertInTx(personsRoom)
+            }
+            .run("Room-read", runs = 10) { roomDao.getAll() }
+
+        runner
+            .before {
+                realm.executeTransaction { it.delete(PersonRealm::class.java) }
+                realm.executeTransaction { it.copyToRealm(personsRealm) }
+            }
+            .run("Realm-read", runs = 10) {
+                realm.executeTransaction { it.where(PersonRealm::class.java).findAll() }
             }
 
     }

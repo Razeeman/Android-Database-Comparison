@@ -3,12 +3,21 @@ package com.example.database.comparison
 class TestRunner(private val logger: Logger) {
 
     private var before: () -> Unit = {}
+    private var beforeEach: () -> Unit = {}
 
     /**
-     * Set up function to run before tests.
+     * Set up a function to run once before tests.
      */
     fun before(func: () -> Unit): TestRunner {
         before = func
+        return this
+    }
+
+    /**
+     * Set up a function to run before each test.
+     */
+    fun beforeEach(func: () -> Unit): TestRunner {
+        beforeEach = func
         return this
     }
 
@@ -18,9 +27,11 @@ class TestRunner(private val logger: Logger) {
     fun run(name: String, runs: Int = 1, func: () -> Unit) {
         val runTimes = LongArray(runs)
 
+        before()
+
         for (i in 0 until runs) {
             // Execute preparation code.
-            before()
+            beforeEach()
 
             // TODO System or SystemClock
             val startTime = System.currentTimeMillis()
@@ -28,6 +39,9 @@ class TestRunner(private val logger: Logger) {
             func()
             runTimes[i] = System.currentTimeMillis() - startTime
         }
+
+        before = {}
+        beforeEach = {}
 
         val averageRunTime = runTimes.sum() / runs
 
