@@ -46,18 +46,19 @@ class MainActivity : AppCompatActivity() {
         realm.copyToRealm(personsRealm)
         realm.commitTransaction()
 
-        roomDao.deleteAll()
-        runner.run("Room-insert", 10) { roomDao.insertInTx(personsRoom) }
+        runner
+            .before { roomDao.deleteAll() }
+            .run("Room-insert", runs = 10) { roomDao.insertInTx(personsRoom) }
 
-        greenDao.deleteAll()
-        runner.run("Greendao-insert", 10) { greenDao.insertInTx(personsGreendao) }
+        runner
+            .before { greenDao.deleteAll() }
+            .run("Greendao-insert", runs = 10) { greenDao.insertInTx(personsGreendao) }
 
-        realm.delete(PersonRealm::class.java)
-        runner.run("Realm-insert", 10) {
-            realm.beginTransaction()
-            realm.copyToRealm(personsRealm)
-            realm.commitTransaction()
-        }
+        runner
+            .before { realm.delete(PersonRealm::class.java) }
+            .run("Realm-insert", runs = 10) {
+                realm.executeTransaction { it.copyToRealm(personsRealm) }
+            }
 
     }
 }
