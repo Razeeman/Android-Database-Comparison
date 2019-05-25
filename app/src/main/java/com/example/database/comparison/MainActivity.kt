@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import com.example.database.comparison.greendao.model.DaoMaster
+import com.example.database.comparison.objectbox.model.MyObjectBox
+import com.example.database.comparison.objectbox.model.PersonObjectbox
 import com.example.database.comparison.realm.model.PersonRealm
 import com.example.database.comparison.room.db.AppRoomDatabase
 import io.realm.Realm
@@ -19,20 +21,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val roomDao = Room.databaseBuilder(applicationContext,
-            AppRoomDatabase::class.java, "room-database")
-            .allowMainThreadQueries()
-            .build()
-            .personRoomDao()
-
         val greenDao = DaoMaster(DaoMaster
             .DevOpenHelper(this, "greendao-database")
             .writableDb)
             .newSession()
             .personGreenDao
 
+        val objectBoxDao = MyObjectBox.builder()
+            .androidContext(applicationContext)
+            .build()
+            .boxFor(PersonObjectbox::class.java)
+
+        val roomDao = Room.databaseBuilder(applicationContext,
+            AppRoomDatabase::class.java, "room-database")
+            .allowMainThreadQueries()
+            .build()
+            .personRoomDao()
+
         Realm.init(this)
-        val realm = Realm.getInstance(RealmConfiguration
+        val realmDao = Realm.getInstance(RealmConfiguration
             .Builder()
             .deleteRealmIfMigrationNeeded()
             .build()
@@ -43,8 +50,9 @@ class MainActivity : AppCompatActivity() {
         val dataProvider = DataProvider()
 
         val persons = dataProvider.getPersons(1000)
-        val personsRoom = DataTransformer.toPersonsRoom(persons)
         val personsGreendao = DataTransformer.toPersonsGreendao(persons)
+        val personsObjectbox = DataTransformer.toPersonsObjectbox(persons)
+        val personsRoom = DataTransformer.toPersonsRoom(persons)
         val personsRealm = DataTransformer.toPersonsRealm(persons)
 
         runner
@@ -52,13 +60,17 @@ class MainActivity : AppCompatActivity() {
             .run("Greendao-insert", runs = 10) { greenDao.insertInTx(personsGreendao) }
 
         runner
+            .beforeEach { objectBoxDao.removeAll() }
+            .run("Objectbox-insert", runs = 10) { objectBoxDao.put(personsObjectbox) }
+
+        runner
             .beforeEach { roomDao.deleteAll() }
             .run("Room-insert", runs = 10) { roomDao.insertInTx(personsRoom) }
 
         runner
-            .beforeEach { realm.executeTransaction { it.delete(PersonRealm::class.java) } }
+            .beforeEach { realmDao.executeTransaction { it.delete(PersonRealm::class.java) } }
             .run("Realm-insert", runs = 10) {
-                realm.executeTransaction { it.copyToRealm(personsRealm) }
+                realmDao.executeTransaction { it.copyToRealm(personsRealm) }
             }
 
         runner
@@ -70,6 +82,13 @@ class MainActivity : AppCompatActivity() {
 
         runner
             .before {
+                objectBoxDao.removeAll()
+                objectBoxDao.put(personsObjectbox)
+            }
+            .run("Objectbox-read", runs = 10) { objectBoxDao.all }
+
+        runner
+            .before {
                 roomDao.deleteAll()
                 roomDao.insertInTx(personsRoom)
             }
@@ -77,11 +96,11 @@ class MainActivity : AppCompatActivity() {
 
         runner
             .before {
-                realm.executeTransaction { it.delete(PersonRealm::class.java) }
-                realm.executeTransaction { it.copyToRealm(personsRealm) }
+                realmDao.executeTransaction { it.delete(PersonRealm::class.java) }
+                realmDao.executeTransaction { it.copyToRealm(personsRealm) }
             }
             .run("Realm-read", runs = 10) {
-                realm.executeTransaction { it.where(PersonRealm::class.java).findAll() }
+                realmDao.executeTransaction { it.where(PersonRealm::class.java).findAll() }
             }
 
     }
