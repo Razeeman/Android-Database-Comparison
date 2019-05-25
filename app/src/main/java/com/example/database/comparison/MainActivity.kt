@@ -14,7 +14,11 @@ import io.realm.RealmConfiguration
 class MainActivity : AppCompatActivity() {
 
     companion object {
+        @Suppress("unused") // Suppressed to not bother adding later.
         private const val TAG = "CUSTOM_TAG"
+
+        private const val NUMBER_OF_OBJECTS = 1000
+        private const val NUMBER_OF_RUNS = 10
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +31,7 @@ class MainActivity : AppCompatActivity() {
             .newSession()
             .personGreenDao
 
-        val objectBoxDao = MyObjectBox.builder()
+        val objectboxDao = MyObjectBox.builder()
             .androidContext(applicationContext)
             .build()
             .boxFor(PersonObjectbox::class.java)
@@ -49,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         val runner = TestRunner(logger)
         val dataProvider = DataProvider()
 
-        val persons = dataProvider.getPersons(1000)
+        val persons = dataProvider.getPersons(NUMBER_OF_OBJECTS)
         val personsGreendao = DataTransformer.toPersonsGreendao(persons)
         val personsObjectbox = DataTransformer.toPersonsObjectbox(persons)
         val personsRoom = DataTransformer.toPersonsRoom(persons)
@@ -57,19 +61,19 @@ class MainActivity : AppCompatActivity() {
 
         runner
             .beforeEach { greenDao.deleteAll() }
-            .run("Greendao-insert", runs = 10) { greenDao.insertInTx(personsGreendao) }
+            .run("Greendao-insert", NUMBER_OF_RUNS) { greenDao.insertInTx(personsGreendao) }
 
         runner
-            .beforeEach { objectBoxDao.removeAll() }
-            .run("Objectbox-insert", runs = 10) { objectBoxDao.put(personsObjectbox) }
+            .beforeEach { objectboxDao.removeAll() }
+            .run("Objectbox-insert", NUMBER_OF_RUNS) { objectboxDao.put(personsObjectbox) }
 
         runner
             .beforeEach { roomDao.deleteAll() }
-            .run("Room-insert", runs = 10) { roomDao.insertInTx(personsRoom) }
+            .run("Room-insert", NUMBER_OF_RUNS) { roomDao.insertInTx(personsRoom) }
 
         runner
             .beforeEach { realmDao.executeTransaction { it.delete(PersonRealm::class.java) } }
-            .run("Realm-insert", runs = 10) {
+            .run("Realm-insert", NUMBER_OF_RUNS) {
                 realmDao.executeTransaction { it.copyToRealm(personsRealm) }
             }
 
@@ -78,28 +82,28 @@ class MainActivity : AppCompatActivity() {
                 greenDao.deleteAll()
                 greenDao.insertInTx(personsGreendao)
             }
-            .run("Greendao-read", runs = 10) { greenDao.loadAll() }
+            .run("Greendao-read", NUMBER_OF_RUNS) { greenDao.loadAll() }
 
         runner
             .before {
-                objectBoxDao.removeAll()
-                objectBoxDao.put(personsObjectbox)
+                objectboxDao.removeAll()
+                objectboxDao.put(personsObjectbox)
             }
-            .run("Objectbox-read", runs = 10) { objectBoxDao.all }
+            .run("Objectbox-read", NUMBER_OF_RUNS) { objectboxDao.all }
 
         runner
             .before {
                 roomDao.deleteAll()
                 roomDao.insertInTx(personsRoom)
             }
-            .run("Room-read", runs = 10) { roomDao.getAll() }
+            .run("Room-read", NUMBER_OF_RUNS) { roomDao.getAll() }
 
         runner
             .before {
                 realmDao.executeTransaction { it.delete(PersonRealm::class.java) }
                 realmDao.executeTransaction { it.copyToRealm(personsRealm) }
             }
-            .run("Realm-read", runs = 10) {
+            .run("Realm-read", NUMBER_OF_RUNS) {
                 realmDao.executeTransaction { it.where(PersonRealm::class.java).findAll() }
             }
 
