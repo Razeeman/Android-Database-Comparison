@@ -7,7 +7,6 @@ import androidx.room.Delete
 import com.example.database.comparison.sqlite.db.PersonSchema
 import com.example.database.comparison.sqlite.model.PersonSQLite
 
-
 class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) {
 
     companion object {
@@ -46,16 +45,15 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
             null)
 
         cursor.use {
-            cursor.moveToFirst()
-            while (!cursor.isAfterLast) {
-                val id = cursor.getInt(cursor.getColumnIndex(PersonSchema.COLUMN_ID))
-                val firstName = cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_FIRST_NAME))
-                val secondName = cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_SECOND_NAME))
-                val age = cursor.getInt(cursor.getColumnIndex(PersonSchema.COLUMN_AGE))
+            cursor.moveToPosition(-1)
+            while (cursor.moveToNext()) {
+                val person = PersonSQLite(
+                    cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_FIRST_NAME)),
+                    cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_SECOND_NAME)),
+                    cursor.getInt(cursor.getColumnIndex(PersonSchema.COLUMN_AGE)))
+                    .also { it.id = cursor.getInt(cursor.getColumnIndex(PersonSchema.COLUMN_ID)) }
 
-                persons.add(PersonSQLite(firstName, secondName, age).also { it.id = id })
-
-                cursor.moveToNext()
+                persons.add(person)
             }
         }
 
@@ -67,8 +65,8 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
             for (person in persons) {
                 update(PersonSchema.TABLE_NAME,
                     getContentValues(person),
-                    PersonSchema.COLUMN_ID + " = ?",
-                    arrayOf(person.id.toString()))
+                    "${PersonSchema.COLUMN_ID} = ${person.id}",
+                    null)
             }
         }
     }
@@ -78,8 +76,8 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         database.transaction {
             for (person in persons) {
                 delete(PersonSchema.TABLE_NAME,
-                    PersonSchema.COLUMN_ID + " = ?",
-                    arrayOf(person.id.toString()))
+                    "${PersonSchema.COLUMN_ID} = ${person.id}",
+                    null)
             }
         }
     }

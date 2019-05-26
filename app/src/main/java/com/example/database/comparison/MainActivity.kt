@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         @Suppress("unused") // Suppressed to not bother adding later.
         private const val TAG = "CUSTOM_TAG"
 
-        private const val NUMBER_OF_OBJECTS = 1000
+        private const val NUMBER_OF_OBJECTS = 10000
         private const val NUMBER_OF_RUNS = 10
     }
 
