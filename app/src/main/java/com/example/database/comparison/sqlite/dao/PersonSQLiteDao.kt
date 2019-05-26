@@ -48,7 +48,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         cursor.use {
             cursor.moveToFirst()
             while (!cursor.isAfterLast) {
-                val id = cursor.getLong(cursor.getColumnIndex(PersonSchema.COLUMN_ID))
+                val id = cursor.getInt(cursor.getColumnIndex(PersonSchema.COLUMN_ID))
                 val firstName = cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_FIRST_NAME))
                 val secondName = cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_SECOND_NAME))
                 val age = cursor.getInt(cursor.getColumnIndex(PersonSchema.COLUMN_AGE))

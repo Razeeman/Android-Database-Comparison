@@ -6,6 +6,6 @@ data class PersonSQLite (
     var age: Int
 ) {
 
-    var id: Long = 0
+    var id: Int = 0
 
 }

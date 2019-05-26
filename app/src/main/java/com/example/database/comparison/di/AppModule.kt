@@ -9,6 +9,8 @@ import com.example.database.comparison.objectbox.model.MyObjectBox
 import com.example.database.comparison.objectbox.model.PersonObjectbox
 import com.example.database.comparison.room.dao.PersonRoomDao
 import com.example.database.comparison.room.db.AppRoomDatabase
+import com.example.database.comparison.sqlite.dao.PersonSQLiteDao
+import com.example.database.comparison.sqlite.db.AppSQLiteDatabase
 import dagger.Module
 import dagger.Provides
 import io.objectbox.Box
@@ -28,6 +30,13 @@ class AppModule(application: App) {
     @Singleton
     fun getAppContext(): Context {
         return applicationContext
+    }
+
+    @Provides
+    @Singleton
+    fun getPersonSQLiteDao(): PersonSQLiteDao {
+        return PersonSQLiteDao.get(
+            AppSQLiteDatabase.get(applicationContext))
     }
 
     @Provides

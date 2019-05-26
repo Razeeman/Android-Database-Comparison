@@ -5,10 +5,23 @@ import com.example.database.comparison.model.Person
 import com.example.database.comparison.objectbox.model.PersonObjectbox
 import com.example.database.comparison.realm.model.PersonRealm
 import com.example.database.comparison.room.model.PersonRoom
+import com.example.database.comparison.sqlite.model.PersonSQLite
 
 class DataTransformer private constructor() {
 
     companion object {
+
+        fun toPersonSQLite(person: Person): PersonSQLite {
+            return PersonSQLite(
+                person.firstName,
+                person.secondsName,
+                person.age
+            )
+        }
+
+        fun toPersonsSQLite(persons: List<Person>): List<PersonSQLite> {
+            return persons.map { toPersonSQLite(it) }
+        }
 
         fun toPersonGreendao(person: Person): PersonGreen {
             return PersonGreen(

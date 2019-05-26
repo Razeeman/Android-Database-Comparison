@@ -13,7 +13,7 @@ class AppSQLiteDatabase private constructor(context: Context)
         private const val DATABASE_VERSION = 1
 
         private const val CREATE_TABLE_PERSONS = "create table " +
-                PersonSchema.TABLE_NAME + "(_id long primary key autoincrement, " +
+                PersonSchema.TABLE_NAME + "(_id integer primary key autoincrement, " +
                 PersonSchema.COLUMN_ID + ", " +
                 PersonSchema.COLUMN_FIRST_NAME + ", " +
                 PersonSchema.COLUMN_SECOND_NAME + ", " +

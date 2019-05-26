@@ -6,6 +6,7 @@ import com.example.database.comparison.greendao.model.PersonGreenDao
 import com.example.database.comparison.objectbox.model.PersonObjectbox
 import com.example.database.comparison.realm.model.PersonRealm
 import com.example.database.comparison.room.dao.PersonRoomDao
+import com.example.database.comparison.sqlite.dao.PersonSQLiteDao
 import io.objectbox.Box
 import io.realm.Realm
 import javax.inject.Inject
@@ -16,10 +17,12 @@ class MainActivity : AppCompatActivity() {
         @Suppress("unused") // Suppressed to not bother adding later.
         private const val TAG = "CUSTOM_TAG"
 
-        private const val NUMBER_OF_OBJECTS = 10000
-        private const val NUMBER_OF_RUNS = 100
+        private const val NUMBER_OF_OBJECTS = 1000
+        private const val NUMBER_OF_RUNS = 10
     }
 
+    @Inject
+    lateinit var sqliteDao: PersonSQLiteDao
     @Inject
     lateinit var greenDao: PersonGreenDao
     @Inject
@@ -34,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     private val dataProvider = DataProvider()
 
     private val persons = dataProvider.getPersons(NUMBER_OF_OBJECTS)
+    private val personsSqlite = DataTransformer.toPersonsSQLite(persons)
     private val personsGreendao = DataTransformer.toPersonsGreendao(persons)
     private val personsObjectbox = DataTransformer.toPersonsObjectbox(persons)
     private val personsRoom = DataTransformer.toPersonsRoom(persons)
@@ -43,6 +47,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         App.getAppComponent().inject(this)
         setContentView(R.layout.activity_main)
+
+        // Insert test.
+
+        runner
+            .beforeEach { sqliteDao.deleteAll() }
+            .run("SQLite-insert", NUMBER_OF_RUNS) { sqliteDao.insertInTx(personsSqlite) }
 
         runner
             .beforeEach { greenDao.deleteAll() }
@@ -61,6 +71,15 @@ class MainActivity : AppCompatActivity() {
             .run("Realm-insert", NUMBER_OF_RUNS) {
                 realmDao.executeTransaction { it.copyToRealm(personsRealm) }
             }
+
+        // Read test.
+
+        runner
+            .before {
+                sqliteDao.deleteAll()
+                sqliteDao.insertInTx(personsSqlite)
+            }
+            .run("SQLite-read", NUMBER_OF_RUNS) { sqliteDao.getAll() }
 
         runner
             .before {
