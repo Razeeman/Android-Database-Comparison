@@ -1,6 +1,6 @@
-package com.example.database.comparison
+package com.example.database.comparison.util
 
-class TestRunner(private val logger: Logger) {
+class Runner(private val logger: Logger) {
 
     private var before: () -> Unit = {}
     private var beforeEach: () -> Unit = {}
@@ -8,7 +8,7 @@ class TestRunner(private val logger: Logger) {
     /**
      * Set up a function to run once before tests.
      */
-    fun before(func: () -> Unit): TestRunner {
+    fun before(func: () -> Unit): Runner {
         before = func
         return this
     }
@@ -16,7 +16,7 @@ class TestRunner(private val logger: Logger) {
     /**
      * Set up a function to run before each test.
      */
-    fun beforeEach(func: () -> Unit): TestRunner {
+    fun beforeEach(func: () -> Unit): Runner {
         beforeEach = func
         return this
     }
@@ -30,13 +30,12 @@ class TestRunner(private val logger: Logger) {
         before()
 
         for (i in 0 until runs) {
-            // Execute preparation code.
             beforeEach()
 
-            // TODO System or SystemClock
             val startTime = System.currentTimeMillis()
-            // Execute tested code.
+
             func()
+
             runTimes[i] = System.currentTimeMillis() - startTime
         }
 

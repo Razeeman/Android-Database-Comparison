@@ -1,4 +1,4 @@
-package com.example.database.comparison
+package com.example.database.comparison.util
 
 import android.util.Log
 

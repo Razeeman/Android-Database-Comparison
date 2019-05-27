@@ -1,4 +1,4 @@
-package com.example.database.comparison
+package com.example.database.comparison.util
 
 import com.example.database.comparison.model.Person
 import java.util.*

@@ -7,6 +7,10 @@ import com.example.database.comparison.objectbox.model.PersonObjectbox
 import com.example.database.comparison.realm.model.PersonRealm
 import com.example.database.comparison.room.dao.PersonRoomDao
 import com.example.database.comparison.sqlite.dao.PersonSQLiteDao
+import com.example.database.comparison.util.DataProvider
+import com.example.database.comparison.util.DataTransformer
+import com.example.database.comparison.util.Logger
+import com.example.database.comparison.util.Runner
 import io.objectbox.Box
 import io.realm.Realm
 import javax.inject.Inject
@@ -33,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var realmDao: Realm
 
     private val logger = Logger()
-    private val runner = TestRunner(logger)
+    private val runner = Runner(logger)
     private val dataProvider = DataProvider()
 
     private val persons = dataProvider.getPersons(NUMBER_OF_OBJECTS)
