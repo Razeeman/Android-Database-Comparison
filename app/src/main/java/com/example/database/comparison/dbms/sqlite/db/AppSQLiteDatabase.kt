@@ -13,8 +13,8 @@ class AppSQLiteDatabase private constructor(context: Context)
         private const val DATABASE_VERSION = 1
 
         private const val CREATE_TABLE_PERSONS = "create table " +
-                PersonSchema.TABLE_NAME + "(_id integer primary key autoincrement, " +
-                PersonSchema.COLUMN_ID + ", " +
+                PersonSchema.TABLE_NAME + "(" +
+                PersonSchema.COLUMN_ID + " integer primary key autoincrement, " +
                 PersonSchema.COLUMN_FIRST_NAME + ", " +
                 PersonSchema.COLUMN_SECOND_NAME + ", " +
                 PersonSchema.COLUMN_AGE + ")"
@@ -36,5 +36,7 @@ class AppSQLiteDatabase private constructor(context: Context)
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db?.execSQL("DROP TABLE IF EXISTS ${PersonSchema.TABLE_NAME}")
+
+        onCreate(db)
     }
 }

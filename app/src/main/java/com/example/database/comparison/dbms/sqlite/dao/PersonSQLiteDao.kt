@@ -89,7 +89,6 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
     private fun getContentValues(person: PersonSQLite): ContentValues {
         val values = ContentValues()
 
-        values.put(PersonSchema.COLUMN_ID, person.id)
         values.put(PersonSchema.COLUMN_FIRST_NAME, person.firstName)
         values.put(PersonSchema.COLUMN_SECOND_NAME, person.secondsName)
         values.put(PersonSchema.COLUMN_AGE, person.age)
