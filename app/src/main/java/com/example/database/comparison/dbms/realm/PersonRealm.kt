@@ -1,4 +1,4 @@
-package com.example.database.comparison.realm.model
+package com.example.database.comparison.dbms.realm
 
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey

@@ -1,4 +1,4 @@
-package com.example.database.comparison.objectbox.model
+package com.example.database.comparison.dbms.objectbox
 
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id

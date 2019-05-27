@@ -1,11 +1,11 @@
 package com.example.database.comparison.util
 
-import com.example.database.comparison.greendao.model.PersonGreen
+import com.example.database.comparison.dbms.greendao.PersonGreen
 import com.example.database.comparison.model.Person
-import com.example.database.comparison.objectbox.model.PersonObjectbox
-import com.example.database.comparison.realm.model.PersonRealm
-import com.example.database.comparison.room.model.PersonRoom
-import com.example.database.comparison.sqlite.model.PersonSQLite
+import com.example.database.comparison.dbms.objectbox.PersonObjectbox
+import com.example.database.comparison.dbms.realm.PersonRealm
+import com.example.database.comparison.dbms.room.model.PersonRoom
+import com.example.database.comparison.dbms.sqlite.model.PersonSQLite
 
 class DataTransformer private constructor() {
 

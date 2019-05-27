@@ -1,4 +1,4 @@
-package com.example.database.comparison.greendao.model;
+package com.example.database.comparison.dbms.greendao;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;

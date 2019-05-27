@@ -1,7 +1,7 @@
-package com.example.database.comparison.room.dao
+package com.example.database.comparison.dbms.room.dao
 
 import androidx.room.*
-import com.example.database.comparison.room.model.PersonRoom
+import com.example.database.comparison.dbms.room.model.PersonRoom
 
 @Dao
 interface PersonRoomDao {

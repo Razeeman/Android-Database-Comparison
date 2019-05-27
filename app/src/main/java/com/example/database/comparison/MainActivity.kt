@@ -2,11 +2,11 @@ package com.example.database.comparison
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.database.comparison.greendao.model.PersonGreenDao
-import com.example.database.comparison.objectbox.model.PersonObjectbox
-import com.example.database.comparison.realm.model.PersonRealm
-import com.example.database.comparison.room.dao.PersonRoomDao
-import com.example.database.comparison.sqlite.dao.PersonSQLiteDao
+import com.example.database.comparison.dbms.greendao.PersonGreenDao
+import com.example.database.comparison.dbms.objectbox.PersonObjectbox
+import com.example.database.comparison.dbms.realm.PersonRealm
+import com.example.database.comparison.dbms.room.dao.PersonRoomDao
+import com.example.database.comparison.dbms.sqlite.dao.PersonSQLiteDao
 import com.example.database.comparison.util.DataProvider
 import com.example.database.comparison.util.DataTransformer
 import com.example.database.comparison.util.Logger

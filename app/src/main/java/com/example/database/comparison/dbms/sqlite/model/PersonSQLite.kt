@@ -1,4 +1,4 @@
-package com.example.database.comparison.sqlite.model
+package com.example.database.comparison.dbms.sqlite.model
 
 data class PersonSQLite (
     var firstName: String,

@@ -1,4 +1,4 @@
-package com.example.database.comparison.room.model
+package com.example.database.comparison.dbms.room.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -1,11 +1,11 @@
-package com.example.database.comparison.sqlite.dao
+package com.example.database.comparison.dbms.sqlite.dao
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import androidx.core.database.sqlite.transaction
 import androidx.room.Delete
-import com.example.database.comparison.sqlite.db.PersonSchema
-import com.example.database.comparison.sqlite.model.PersonSQLite
+import com.example.database.comparison.dbms.sqlite.db.PersonSchema
+import com.example.database.comparison.dbms.sqlite.model.PersonSQLite
 
 class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) {
 

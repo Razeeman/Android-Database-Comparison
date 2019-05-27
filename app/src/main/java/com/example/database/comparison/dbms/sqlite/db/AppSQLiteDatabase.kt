@@ -1,4 +1,4 @@
-package com.example.database.comparison.sqlite.db
+package com.example.database.comparison.dbms.sqlite.db
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
