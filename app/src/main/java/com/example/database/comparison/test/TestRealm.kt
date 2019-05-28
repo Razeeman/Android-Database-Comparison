@@ -56,7 +56,7 @@ class TestRealm(private val runner: Runner, private val dao : Realm)
             .beforeEach {
                 dao.executeTransaction { it.delete(PersonRealm::class.java) }
                 dao.executeTransaction { it.insert(persons) }
-                unmanaged = dao.where(PersonRealm::class.java).findAll()
+                unmanaged = dao.copyFromRealm(dao.where(PersonRealm::class.java).findAll())
             }
             .run("$NAME-delete", runs) {
                 // Can't delete unmanaged objects by themselves. Delete all instead.

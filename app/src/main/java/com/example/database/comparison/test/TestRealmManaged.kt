@@ -41,7 +41,7 @@ class TestRealmManaged(private val runner: Runner, private val dao : Realm)
         runner
             .beforeEach {
                 dao.executeTransaction { it.delete(PersonRealm::class.java) }
-                managed = dao.copyToRealm(persons)
+                dao.executeTransaction { managed = dao.copyToRealm(persons) }
             }
             .run("$NAME-update", runs) {
                 dao.executeTransaction { change(managed) }
@@ -50,7 +50,7 @@ class TestRealmManaged(private val runner: Runner, private val dao : Realm)
         runner
             .beforeEach {
                 dao.executeTransaction { it.delete(PersonRealm::class.java) }
-                managed = dao.copyToRealm(persons)
+                dao.executeTransaction { managed = dao.copyToRealm(persons) }
             }
             .run("$NAME-delete", runs) {
                 dao.executeTransaction { managed.forEach { it.deleteFromRealm() } }
