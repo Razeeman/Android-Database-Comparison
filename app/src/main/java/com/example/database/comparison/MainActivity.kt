@@ -1,6 +1,7 @@
 package com.example.database.comparison
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.database.comparison.dbms.greendao.PersonGreenDao
 import com.example.database.comparison.dbms.objectbox.PersonObjectbox
@@ -51,5 +52,7 @@ class MainActivity : AppCompatActivity() {
         TestRoom(runner, roomDao).run(NUMBER_OF_RUNS, persons)
         TestRealm(runner, realmDao).run(NUMBER_OF_RUNS, persons)
         TestRealmManaged(runner, realmDao).run(NUMBER_OF_RUNS, persons)
+
+        Log.d(TAG, "Tests are finished")
     }
 }

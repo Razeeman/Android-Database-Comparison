@@ -5,7 +5,8 @@ import com.example.database.comparison.model.Person
 import com.example.database.comparison.util.DataTransformer
 import com.example.database.comparison.util.Runner
 import io.realm.Realm
-import java.util.*
+import io.realm.RealmResults
+import kotlin.collections.ArrayList
 
 class TestRealmManaged(private val runner: Runner, private val dao : Realm)
     : BaseTest {
@@ -18,6 +19,7 @@ class TestRealmManaged(private val runner: Runner, private val dao : Realm)
 
         val persons = DataTransformer.toPersonsRealm(data)
 
+        var results: RealmResults<PersonRealm>? = null
         var managed: List<PersonRealm> = ArrayList()
 
         runner
@@ -34,8 +36,8 @@ class TestRealmManaged(private val runner: Runner, private val dao : Realm)
                 dao.executeTransaction { it.insert(persons) }
             }
             .run("$NAME-read", runs) {
-                managed = dao.where(PersonRealm::class.java).findAll()
-                access(managed)
+                results = dao.where(PersonRealm::class.java).findAll()
+                access(results!!)
             }
 
         runner
@@ -50,10 +52,11 @@ class TestRealmManaged(private val runner: Runner, private val dao : Realm)
         runner
             .beforeEach {
                 dao.executeTransaction { it.delete(PersonRealm::class.java) }
-                dao.executeTransaction { managed = dao.copyToRealm(persons) }
+                dao.executeTransaction { dao.insert(persons) }
+                results = dao.where(PersonRealm::class.java).findAll()
             }
             .run("$NAME-delete", runs) {
-                dao.executeTransaction { managed.forEach { it.deleteFromRealm() } }
+                dao.executeTransaction { results!!.deleteAllFromRealm() }
             }
     }
 

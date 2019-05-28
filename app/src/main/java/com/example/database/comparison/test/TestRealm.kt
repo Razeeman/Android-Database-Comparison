@@ -5,6 +5,7 @@ import com.example.database.comparison.model.Person
 import com.example.database.comparison.util.DataTransformer
 import com.example.database.comparison.util.Runner
 import io.realm.Realm
+import io.realm.RealmResults
 import java.util.*
 
 class TestRealm(private val runner: Runner, private val dao : Realm)
@@ -18,7 +19,7 @@ class TestRealm(private val runner: Runner, private val dao : Realm)
 
         val persons = DataTransformer.toPersonsRealm(data)
 
-        var results: List<PersonRealm> = ArrayList()
+        var results: RealmResults<PersonRealm>? = null
         var unmanaged: List<PersonRealm> = ArrayList()
         var updated: List<PersonRealm> = ArrayList()
 
@@ -37,7 +38,7 @@ class TestRealm(private val runner: Runner, private val dao : Realm)
                 results = dao.where(PersonRealm::class.java).findAll()
             }
             .run("$NAME-read", runs) {
-                unmanaged = dao.copyFromRealm(results)
+                unmanaged = dao.copyFromRealm(results!!)
                 access(unmanaged)
             }
 
@@ -52,16 +53,7 @@ class TestRealm(private val runner: Runner, private val dao : Realm)
                 dao.executeTransaction { it.insertOrUpdate(updated) }
             }
 
-        runner
-            .beforeEach {
-                dao.executeTransaction { it.delete(PersonRealm::class.java) }
-                dao.executeTransaction { it.insert(persons) }
-                unmanaged = dao.copyFromRealm(dao.where(PersonRealm::class.java).findAll())
-            }
-            .run("$NAME-delete", runs) {
-                // Can't delete unmanaged objects by themselves. Delete all instead.
-                dao.executeTransaction { it.delete(PersonRealm::class.java) }
-            }
+        // No delete test for unmanaged objects. Can't delete unmanaged objects by themselves.
     }
 
     private fun access(persons: List<PersonRealm>) {
