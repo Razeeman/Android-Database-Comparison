@@ -4,11 +4,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.database.comparison.dbms.greendao.PersonGreenDao
 import com.example.database.comparison.dbms.objectbox.PersonObjectbox
-import com.example.database.comparison.dbms.realm.PersonRealm
 import com.example.database.comparison.dbms.room.dao.PersonRoomDao
 import com.example.database.comparison.dbms.sqlite.dao.PersonSQLiteDao
+import com.example.database.comparison.test.*
 import com.example.database.comparison.util.DataProvider
-import com.example.database.comparison.util.DataTransformer
 import com.example.database.comparison.util.Logger
 import com.example.database.comparison.util.Runner
 import io.objectbox.Box
@@ -25,95 +24,31 @@ class MainActivity : AppCompatActivity() {
         private const val NUMBER_OF_RUNS = 10
     }
 
-    @Inject
-    lateinit var sqliteDao: PersonSQLiteDao
-    @Inject
-    lateinit var greenDao: PersonGreenDao
-    @Inject
-    lateinit var objectboxDao: Box<PersonObjectbox>
-    @Inject
-    lateinit var roomDao: PersonRoomDao
-    @Inject
-    lateinit var realmDao: Realm
-
-    private val logger = Logger()
-    private val runner = Runner(logger)
-    private val dataProvider = DataProvider()
-
-    private val persons = dataProvider.getPersons(NUMBER_OF_OBJECTS)
-    private val personsSqlite = DataTransformer.toPersonsSQLite(persons)
-    private val personsGreendao = DataTransformer.toPersonsGreendao(persons)
-    private val personsObjectbox = DataTransformer.toPersonsObjectbox(persons)
-    private val personsRoom = DataTransformer.toPersonsRoom(persons)
-    private val personsRealm = DataTransformer.toPersonsRealm(persons)
+    @Inject lateinit var sqliteDao: PersonSQLiteDao
+    @Inject lateinit var greenDao: PersonGreenDao
+    @Inject lateinit var objectboxDao: Box<PersonObjectbox>
+    @Inject lateinit var roomDao: PersonRoomDao
+    @Inject lateinit var realmDao: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.getAppComponent().inject(this)
         setContentView(R.layout.activity_main)
 
-        // Insert test.
+        runTests()
+    }
 
-        runner
-            .beforeEach { sqliteDao.deleteAll() }
-            .run("SQLite-insert", NUMBER_OF_RUNS) { sqliteDao.insertInTx(personsSqlite) }
+    private fun runTests() {
+        val logger = Logger()
+        val runner = Runner(logger)
+        val dataProvider = DataProvider()
 
-        runner
-            .beforeEach { greenDao.deleteAll() }
-            .run("Greendao-insert", NUMBER_OF_RUNS) { greenDao.insertInTx(personsGreendao) }
+        val persons = dataProvider.getPersons(NUMBER_OF_OBJECTS)
 
-        runner
-            .beforeEach { objectboxDao.removeAll() }
-            .run("Objectbox-insert", NUMBER_OF_RUNS) { objectboxDao.put(personsObjectbox) }
-
-        runner
-            .beforeEach { roomDao.deleteAll() }
-            .run("Room-insert", NUMBER_OF_RUNS) { roomDao.insertInTx(personsRoom) }
-
-        runner
-            .beforeEach { realmDao.executeTransaction { it.delete(PersonRealm::class.java) } }
-            .run("Realm-insert", NUMBER_OF_RUNS) {
-                realmDao.executeTransaction { it.copyToRealm(personsRealm) }
-            }
-
-        // Read test.
-
-        runner
-            .before {
-                sqliteDao.deleteAll()
-                sqliteDao.insertInTx(personsSqlite)
-            }
-            .run("SQLite-read", NUMBER_OF_RUNS) { sqliteDao.getAll() }
-
-        runner
-            .before {
-                greenDao.deleteAll()
-                greenDao.insertInTx(personsGreendao)
-            }
-            .run("Greendao-read", NUMBER_OF_RUNS) { greenDao.loadAll() }
-
-        runner
-            .before {
-                objectboxDao.removeAll()
-                objectboxDao.put(personsObjectbox)
-            }
-            .run("Objectbox-read", NUMBER_OF_RUNS) { objectboxDao.all }
-
-        runner
-            .before {
-                roomDao.deleteAll()
-                roomDao.insertInTx(personsRoom)
-            }
-            .run("Room-read", NUMBER_OF_RUNS) { roomDao.getAll() }
-
-        runner
-            .before {
-                realmDao.executeTransaction { it.delete(PersonRealm::class.java) }
-                realmDao.executeTransaction { it.copyToRealm(personsRealm) }
-            }
-            .run("Realm-read", NUMBER_OF_RUNS) {
-                realmDao.executeTransaction { it.where(PersonRealm::class.java).findAll() }
-            }
-
+        TestSQLite(runner, sqliteDao).run(NUMBER_OF_RUNS, persons)
+        TestGreendao(runner, greenDao).run(NUMBER_OF_RUNS, persons)
+        TestObjectbox(runner, objectboxDao).run(NUMBER_OF_RUNS, persons)
+        TestRoom(runner, roomDao).run(NUMBER_OF_RUNS, persons)
+        TestRealm(runner, realmDao).run(NUMBER_OF_RUNS, persons)
     }
 }
