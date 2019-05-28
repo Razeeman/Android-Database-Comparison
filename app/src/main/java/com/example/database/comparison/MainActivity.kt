@@ -50,5 +50,6 @@ class MainActivity : AppCompatActivity() {
         TestObjectbox(runner, objectboxDao).run(NUMBER_OF_RUNS, persons)
         TestRoom(runner, roomDao).run(NUMBER_OF_RUNS, persons)
         TestRealm(runner, realmDao).run(NUMBER_OF_RUNS, persons)
+        TestRealmManaged(runner, realmDao).run(NUMBER_OF_RUNS, persons)
     }
 }
