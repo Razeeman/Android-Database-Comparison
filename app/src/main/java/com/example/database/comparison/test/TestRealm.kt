@@ -20,8 +20,7 @@ class TestRealm(private val runner: Runner, private val dao : Realm)
         val persons = DataTransformer.toPersonsRealm(data)
 
         var results: RealmResults<PersonRealm>? = null
-        var unmanaged: List<PersonRealm> = ArrayList()
-        var updated: List<PersonRealm> = ArrayList()
+        var managed: List<PersonRealm> = ArrayList()
 
         runner
             .beforeEach {
@@ -35,25 +34,30 @@ class TestRealm(private val runner: Runner, private val dao : Realm)
             .before {
                 dao.executeTransaction { it.delete(PersonRealm::class.java) }
                 dao.executeTransaction { it.insert(persons) }
-                results = dao.where(PersonRealm::class.java).findAll()
             }
             .run("$NAME-read", runs) {
-                unmanaged = dao.copyFromRealm(results!!)
-                access(unmanaged)
+                results = dao.where(PersonRealm::class.java).findAll()
+                access(results!!)
+            }
+
+        runner
+            .beforeEach {
+                dao.executeTransaction { it.delete(PersonRealm::class.java) }
+                dao.executeTransaction { managed = dao.copyToRealm(persons) }
+            }
+            .run("$NAME-update", runs) {
+                dao.executeTransaction { change(managed) }
             }
 
         runner
             .beforeEach {
                 dao.executeTransaction { it.delete(PersonRealm::class.java) }
                 dao.executeTransaction { it.insert(persons) }
-                unmanaged = dao.copyFromRealm(dao.where(PersonRealm::class.java).findAll())
-                updated = change(unmanaged)
+                results = dao.where(PersonRealm::class.java).findAll()
             }
-            .run("$NAME-update", runs) {
-                dao.executeTransaction { it.insertOrUpdate(updated) }
+            .run("$NAME-delete", runs) {
+                dao.executeTransaction { results!!.deleteAllFromRealm() }
             }
-
-        // No delete test for unmanaged objects. Can't delete unmanaged objects by themselves.
     }
 
     private fun access(persons: List<PersonRealm>) {
