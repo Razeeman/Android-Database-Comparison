@@ -32,6 +32,25 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         }
     }
 
+    fun insertRaw(persons: List<PersonSQLite>) {
+        val insert = "INSERT INTO ${PersonSchema.TABLE_NAME} " +
+                "(${PersonSchema.COLUMN_FIRST_NAME}, " +
+                "${PersonSchema.COLUMN_SECOND_NAME}, " +
+                "${PersonSchema.COLUMN_AGE}) VALUES (?, ?, ?)"
+        val stmt = database.compileStatement(insert)
+
+        database.transaction {
+            persons.forEach {
+                stmt.bindString(1, it.firstName)
+                stmt.bindString(2, it.secondsName)
+                stmt.bindLong(3, it.age.toLong())
+
+                stmt.execute()
+                stmt.clearBindings()
+            }
+        }
+    }
+
     fun getAll(): List<PersonSQLite> {
         val persons = ArrayList<PersonSQLite>()
 
@@ -71,6 +90,26 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         }
     }
 
+    fun updateRaw(persons: List<PersonSQLite>) {
+        val update = "UPDATE ${PersonSchema.TABLE_NAME} SET " +
+                "${PersonSchema.COLUMN_FIRST_NAME}=?, " +
+                "${PersonSchema.COLUMN_SECOND_NAME}=?, " +
+                "${PersonSchema.COLUMN_AGE}=? WHERE ${PersonSchema.COLUMN_ID}=?"
+        val stmt = database.compileStatement(update)
+
+        database.transaction {
+            persons.forEach {
+                stmt.bindString(1, it.firstName)
+                stmt.bindString(2, it.secondsName)
+                stmt.bindLong(3, it.age.toLong())
+                stmt.bindLong(4, it.id.toLong())
+
+                stmt.execute()
+                stmt.clearBindings()
+            }
+        }
+    }
+
     @Delete
     fun deleteInTx(persons: List<PersonSQLite>) {
         database.transaction {
@@ -78,6 +117,19 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
                 delete(PersonSchema.TABLE_NAME,
                     "${PersonSchema.COLUMN_ID} = ${person.id}",
                     null)
+            }
+        }
+    }
+
+    fun deleteRaw(persons: List<PersonSQLite>) {
+        val delete = "DELETE FROM ${PersonSchema.TABLE_NAME} WHERE ${PersonSchema.COLUMN_ID}=?"
+        val stmt = database.compileStatement(delete)
+
+        database.transaction {
+            persons.forEach {
+                stmt.bindLong(1, it.id.toLong())
+                stmt.execute()
+                stmt.clearBindings()
             }
         }
     }
