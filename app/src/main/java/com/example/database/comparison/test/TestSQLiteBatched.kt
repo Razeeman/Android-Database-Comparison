@@ -25,6 +25,15 @@ class TestSQLiteBatched(private val runner: Runner, private val dao : PersonSQLi
             .run("$NAME-create", runs) { dao.insertBatched(persons) }
 
         // Read test is the same as regular SQLite.
+        runner
+            .before {
+                dao.deleteAll()
+                dao.insertBatched(persons)
+            }
+            .run("$NAME-read", runs) {
+                reloaded = dao.getAll()
+                access(reloaded)
+            }
 
         runner
             .beforeEach {
@@ -41,6 +50,14 @@ class TestSQLiteBatched(private val runner: Runner, private val dao : PersonSQLi
                 reloaded = dao.getAll()
             }
             .run("$NAME-delete", runs) { dao.deleteBatched(reloaded) }
+    }
+
+    private fun access(persons: List<PersonSQLite>) {
+        persons.forEach {
+            it.firstName
+            it.secondsName
+            it.age
+        }
     }
 
     private fun change(persons: List<PersonSQLite>): List<PersonSQLite> {

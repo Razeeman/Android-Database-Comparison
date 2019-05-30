@@ -25,11 +25,20 @@ class TestSQLiteRaw(private val runner: Runner, private val dao : PersonSQLiteDa
             .run("$NAME-create", runs) { dao.insertRaw(persons) }
 
         // Read test the same as SQLite.
+        runner
+            .before {
+                dao.deleteAll()
+                dao.insertRaw(persons)
+            }
+            .run("$NAME-read", runs) {
+                reloaded = dao.getAll()
+                access(reloaded)
+            }
 
         runner
             .beforeEach {
                 dao.deleteAll()
-                dao.insertInTx(persons)
+                dao.insertRaw(persons)
                 reloaded = dao.getAll()
                 updated = change(reloaded)
             }
@@ -38,10 +47,18 @@ class TestSQLiteRaw(private val runner: Runner, private val dao : PersonSQLiteDa
         runner
             .beforeEach {
                 dao.deleteAll()
-                dao.insertInTx(persons)
+                dao.insertRaw(persons)
                 reloaded = dao.getAll()
             }
             .run("$NAME-delete", runs) { dao.deleteRaw(reloaded) }
+    }
+
+    private fun access(persons: List<PersonSQLite>) {
+        persons.forEach {
+            it.firstName
+            it.secondsName
+            it.age
+        }
     }
 
     private fun change(persons: List<PersonSQLite>): List<PersonSQLite> {
