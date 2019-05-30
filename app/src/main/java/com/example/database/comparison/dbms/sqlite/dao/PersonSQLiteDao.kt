@@ -38,6 +38,25 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         val insert = "INSERT INTO ${PersonSchema.TABLE_NAME} " +
                 "(${PersonSchema.COLUMN_FIRST_NAME}, " +
                 "${PersonSchema.COLUMN_SECOND_NAME}, " +
+                "${PersonSchema.COLUMN_AGE}) VALUES (?, ?, ?)"
+        val stmt = database.compileStatement(insert)
+
+        database.transaction {
+            persons.forEach {
+                stmt.bindString(1, it.firstName)
+                stmt.bindString(2, it.secondsName)
+                stmt.bindLong(3, it.age.toLong())
+
+                stmt.execute()
+                stmt.clearBindings()
+            }
+        }
+    }
+
+    fun insertBatched(persons: List<PersonSQLite>) {
+        val insert = "INSERT INTO ${PersonSchema.TABLE_NAME} " +
+                "(${PersonSchema.COLUMN_FIRST_NAME}, " +
+                "${PersonSchema.COLUMN_SECOND_NAME}, " +
                 "${PersonSchema.COLUMN_AGE}) VALUES "
 
         val columns = 3
@@ -163,7 +182,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         }
     }
 
-    fun deleteRawBatched(persons: List<PersonSQLite>) {
+    fun deleteBatched(persons: List<PersonSQLite>) {
         val delete = "DELETE FROM ${PersonSchema.TABLE_NAME} WHERE ${PersonSchema.COLUMN_ID} IN ("
 
         val insertions = persons.size

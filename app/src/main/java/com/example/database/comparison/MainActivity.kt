@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         TestSQLite(runner, sqliteDao).run(NUMBER_OF_RUNS, persons)
         TestSQLiteRaw(runner, sqliteDao).run(NUMBER_OF_RUNS, persons)
+        TestSQLiteBatched(runner, sqliteDao).run(NUMBER_OF_RUNS, persons)
         TestGreendao(runner, greenDao).run(NUMBER_OF_RUNS, persons)
         TestObjectbox(runner, objectboxDao).run(NUMBER_OF_RUNS, persons)
         TestRoom(runner, roomDao).run(NUMBER_OF_RUNS, persons)
