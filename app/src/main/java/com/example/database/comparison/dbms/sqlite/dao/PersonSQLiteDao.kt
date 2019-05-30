@@ -193,8 +193,11 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
                         .also { stmtCache[batchSize] = it }
                 }
 
+                var id: Long
                 for (i: Int in 0 until batchSize) {
-                    val id = persons[inserted].id
+                    id = persons[inserted].id
+                    // Id of zero means that it is a new object, so it needs to be inserted.
+                    // Argument that are not bound will be defaulted to null and for id it means insert.
                     if (id > 0) stmt.bindLong(columns*i + 1, id)
                     stmt.bindString(columns*i + 2, persons[inserted].firstName)
                     stmt.bindString(columns*i + 3, persons[inserted].secondsName)

@@ -12,7 +12,7 @@ class TestRealm(private val runner: Runner, private val dao : Realm)
     : BaseTest {
 
     companion object {
-        const val NAME = "Realm-Unmanaged"
+        const val NAME = "Realm"
     }
 
     override fun run(runs: Int, data: List<Person>) {
