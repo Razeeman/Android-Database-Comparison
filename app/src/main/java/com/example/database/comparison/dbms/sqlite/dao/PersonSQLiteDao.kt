@@ -119,7 +119,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
                     cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_FIRST_NAME)),
                     cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_SECOND_NAME)),
                     cursor.getInt(cursor.getColumnIndex(PersonSchema.COLUMN_AGE)))
-                    .also { it.id = cursor.getInt(cursor.getColumnIndex(PersonSchema.COLUMN_ID)) }
+                    .also { it.id = cursor.getLong(cursor.getColumnIndex(PersonSchema.COLUMN_ID)) }
 
                 persons.add(person)
             }
@@ -151,7 +151,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
                 stmt.bindString(1, it.firstName)
                 stmt.bindString(2, it.secondsName)
                 stmt.bindLong(3, it.age.toLong())
-                stmt.bindLong(4, it.id.toLong())
+                stmt.bindLong(4, it.id)
 
                 stmt.execute()
                 stmt.clearBindings()
@@ -195,7 +195,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
 
                 for (i: Int in 0 until batchSize) {
                     val id = persons[inserted].id
-                    if (id > 0) stmt.bindLong(columns*i + 1, id.toLong())
+                    if (id > 0) stmt.bindLong(columns*i + 1, id)
                     stmt.bindString(columns*i + 2, persons[inserted].firstName)
                     stmt.bindString(columns*i + 3, persons[inserted].secondsName)
                     stmt.bindLong(columns*i + 4, persons[inserted].age.toLong())
@@ -225,7 +225,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
 
         database.transaction {
             persons.forEach {
-                stmt.bindLong(1, it.id.toLong())
+                stmt.bindLong(1, it.id)
                 stmt.execute()
                 stmt.clearBindings()
             }
@@ -263,7 +263,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
                 }
 
                 for (i: Int in 0 until batchSize) {
-                    stmt.bindLong(i + 1, persons[inserted].id.toLong())
+                    stmt.bindLong(i + 1, persons[inserted].id)
                     inserted++
                 }
 
