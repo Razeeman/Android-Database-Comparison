@@ -1,7 +1,9 @@
 package com.example.database.comparison.dbms.sqlite.dao
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteStatement
 import androidx.core.database.sqlite.transaction
 import androidx.room.Delete
 import com.example.database.comparison.dbms.sqlite.db.PersonSchema
@@ -36,14 +38,41 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         val insert = "INSERT INTO ${PersonSchema.TABLE_NAME} " +
                 "(${PersonSchema.COLUMN_FIRST_NAME}, " +
                 "${PersonSchema.COLUMN_SECOND_NAME}, " +
-                "${PersonSchema.COLUMN_AGE}) VALUES (?, ?, ?)"
-        val stmt = database.compileStatement(insert)
+                "${PersonSchema.COLUMN_AGE}) VALUES "
+
+        val columns = 3
+        val insertions = persons.size
+        var inserted = 0
+        var batchSize = 999/columns
+
+        // Suppressed because SparseArray is slower.
+        @SuppressLint("UseSparseArrays")
+        val stmtCache = HashMap<Int, SQLiteStatement>()
+        var stmt: SQLiteStatement
 
         database.transaction {
-            persons.forEach {
-                stmt.bindString(1, it.firstName)
-                stmt.bindString(2, it.secondsName)
-                stmt.bindLong(3, it.age.toLong())
+
+            while (inserted < insertions) {
+
+                val rest = insertions - inserted
+                batchSize = if (rest > batchSize) batchSize else rest
+
+                stmt = stmtCache.getOrElse(batchSize) {
+                    val builder = StringBuilder()
+                    for (i: Int in 0 until batchSize) {
+                        if (i > 0) builder.append(", ")
+                        builder.append("(?, ?, ?)")
+                    }
+                    database.compileStatement(insert + builder.toString())
+                        .also { stmtCache[batchSize] = it }
+                }
+
+                for (i: Int in 0 until batchSize) {
+                    stmt.bindString(columns*i + 1, persons[inserted].firstName)
+                    stmt.bindString(columns*i + 2, persons[inserted].secondsName)
+                    stmt.bindLong(columns*i + 3, persons[inserted].age.toLong())
+                    inserted++
+                }
 
                 stmt.execute()
                 stmt.clearBindings()
