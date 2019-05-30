@@ -53,6 +53,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         }
     }
 
+    // TODO generalize batched insert, update and delete.
     fun insertBatched(persons: List<PersonSQLite>) {
         val insert = "INSERT INTO ${PersonSchema.TABLE_NAME} " +
                 "(${PersonSchema.COLUMN_FIRST_NAME}, " +
@@ -151,6 +152,55 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
                 stmt.bindString(2, it.secondsName)
                 stmt.bindLong(3, it.age.toLong())
                 stmt.bindLong(4, it.id.toLong())
+
+                stmt.execute()
+                stmt.clearBindings()
+            }
+        }
+    }
+
+    fun updateBatched(persons: List<PersonSQLite>) {
+        val insert = "INSERT OR REPLACE INTO ${PersonSchema.TABLE_NAME} " +
+                "(${PersonSchema.COLUMN_ID}, " +
+                "${PersonSchema.COLUMN_FIRST_NAME}, " +
+                "${PersonSchema.COLUMN_SECOND_NAME}, " +
+                "${PersonSchema.COLUMN_AGE}) VALUES "
+
+        val columns = 4
+        val insertions = persons.size
+        var inserted = 0
+        var batchSize = 999/columns
+
+        // Suppressed because SparseArray is slower.
+        @SuppressLint("UseSparseArrays")
+        val stmtCache = HashMap<Int, SQLiteStatement>()
+        var stmt: SQLiteStatement
+
+        database.transaction {
+
+            while (inserted < insertions) {
+
+                val rest = insertions - inserted
+                batchSize = if (rest > batchSize) batchSize else rest
+
+                stmt = stmtCache.getOrElse(batchSize) {
+                    val builder = StringBuilder()
+                    for (i: Int in 0 until batchSize) {
+                        if (i > 0) builder.append(", ")
+                        builder.append("(?, ?, ?, ?)")
+                    }
+                    database.compileStatement(insert + builder.toString())
+                        .also { stmtCache[batchSize] = it }
+                }
+
+                for (i: Int in 0 until batchSize) {
+                    val id = persons[inserted].id
+                    if (id > 0) stmt.bindLong(columns*i + 1, id.toLong())
+                    stmt.bindString(columns*i + 2, persons[inserted].firstName)
+                    stmt.bindString(columns*i + 3, persons[inserted].secondsName)
+                    stmt.bindLong(columns*i + 4, persons[inserted].age.toLong())
+                    inserted++
+                }
 
                 stmt.execute()
                 stmt.clearBindings()

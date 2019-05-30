@@ -24,14 +24,20 @@ class TestSQLiteBatched(private val runner: Runner, private val dao : PersonSQLi
             .beforeEach { dao.deleteAll() }
             .run("$NAME-create", runs) { dao.insertBatched(persons) }
 
-        // Read test the same as SQLite.
-
-        // TODO update batched.
+        // Read test is the same as regular SQLite.
 
         runner
             .beforeEach {
                 dao.deleteAll()
-                dao.insertInTx(persons)
+                dao.insertBatched(persons)
+                reloaded = dao.getAll()
+                updated = change(reloaded)
+            }
+            .run("$NAME-update", runs) { dao.updateBatched(updated) }
+        runner
+            .beforeEach {
+                dao.deleteAll()
+                dao.insertBatched(persons)
                 reloaded = dao.getAll()
             }
             .run("$NAME-delete", runs) { dao.deleteBatched(reloaded) }
