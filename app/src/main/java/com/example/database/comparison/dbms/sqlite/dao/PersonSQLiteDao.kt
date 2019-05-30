@@ -163,6 +163,47 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         }
     }
 
+    fun deleteRawBatched(persons: List<PersonSQLite>) {
+        val delete = "DELETE FROM ${PersonSchema.TABLE_NAME} WHERE ${PersonSchema.COLUMN_ID} IN ("
+
+        val insertions = persons.size
+        var inserted = 0
+        var batchSize = 999
+
+        // Suppressed because SparseArray is slower.
+        @SuppressLint("UseSparseArrays")
+        val stmtCache = HashMap<Int, SQLiteStatement>()
+        var stmt: SQLiteStatement
+
+        database.transaction {
+
+            while (inserted < insertions) {
+
+                val rest = insertions - inserted
+                batchSize = if (rest > batchSize) batchSize else rest
+
+                stmt = stmtCache.getOrElse(batchSize) {
+                    val builder = StringBuilder()
+                    for (i: Int in 0 until batchSize) {
+                        if (i > 0) builder.append(", ")
+                        builder.append("?")
+                    }
+                    builder.append(")")
+                    database.compileStatement(delete + builder.toString())
+                        .also { stmtCache[batchSize] = it }
+                }
+
+                for (i: Int in 0 until batchSize) {
+                    stmt.bindLong(i + 1, persons[inserted].id.toLong())
+                    inserted++
+                }
+
+                stmt.execute()
+                stmt.clearBindings()
+            }
+        }
+    }
+
     fun deleteAll() {
         database.execSQL("DELETE FROM ${PersonSchema.TABLE_NAME}")
     }
