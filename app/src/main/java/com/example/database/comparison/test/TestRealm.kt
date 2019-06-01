@@ -63,7 +63,7 @@ class TestRealm(private val runner: Runner, private val dao : Realm)
     private fun access(persons: List<PersonRealm>) {
         persons.forEach {
             it.firstName
-            it.secondsName
+            it.secondName
             it.age
         }
     }

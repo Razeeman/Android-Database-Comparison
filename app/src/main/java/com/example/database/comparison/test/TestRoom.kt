@@ -55,7 +55,7 @@ class TestRoom(private val runner: Runner, private val dao : PersonRoomDao)
     private fun access(persons: List<PersonRoom>) {
         persons.forEach {
             it.firstName
-            it.secondsName
+            it.secondName
             it.age
         }
     }

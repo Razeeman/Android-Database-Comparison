@@ -7,7 +7,7 @@ import io.objectbox.annotation.NameInDb
 @Entity
 data class PersonObjectbox (
     @NameInDb("first_name") var firstName: String,
-    @NameInDb("second_name") var secondsName: String,
+    @NameInDb("second_name") var secondName: String,
     @NameInDb("age") var age: Int
 ) {
 

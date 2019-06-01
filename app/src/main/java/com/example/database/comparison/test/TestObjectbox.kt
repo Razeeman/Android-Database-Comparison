@@ -55,7 +55,7 @@ class TestObjectbox(private val runner: Runner, private val dao : Box<PersonObje
     private fun access(persons: List<PersonObjectbox>) {
         persons.forEach {
             it.firstName
-            it.secondsName
+            it.secondName
             it.age
         }
     }

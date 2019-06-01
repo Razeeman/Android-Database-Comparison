@@ -5,7 +5,7 @@ import io.realm.annotations.PrimaryKey
 
 open class PersonRealm (
     var firstName: String,
-    var secondsName: String,
+    var secondName: String,
     var age: Int
 ) : RealmObject() {
 

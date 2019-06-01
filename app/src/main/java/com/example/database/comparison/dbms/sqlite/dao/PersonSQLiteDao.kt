@@ -44,7 +44,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         database.transaction {
             persons.forEach {
                 stmt.bindString(1, it.firstName)
-                stmt.bindString(2, it.secondsName)
+                stmt.bindString(2, it.secondName)
                 stmt.bindLong(3, it.age.toLong())
 
                 stmt.execute()
@@ -89,7 +89,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
 
                 for (i: Int in 0 until batchSize) {
                     stmt.bindString(columns*i + 1, persons[inserted].firstName)
-                    stmt.bindString(columns*i + 2, persons[inserted].secondsName)
+                    stmt.bindString(columns*i + 2, persons[inserted].secondName)
                     stmt.bindLong(columns*i + 3, persons[inserted].age.toLong())
                     inserted++
                 }
@@ -149,7 +149,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         database.transaction {
             persons.forEach {
                 stmt.bindString(1, it.firstName)
-                stmt.bindString(2, it.secondsName)
+                stmt.bindString(2, it.secondName)
                 stmt.bindLong(3, it.age.toLong())
                 stmt.bindLong(4, it.id)
 
@@ -200,7 +200,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
                     // Argument that are not bound will be defaulted to null and for id it means insert.
                     if (id > 0) stmt.bindLong(columns*i + 1, id)
                     stmt.bindString(columns*i + 2, persons[inserted].firstName)
-                    stmt.bindString(columns*i + 3, persons[inserted].secondsName)
+                    stmt.bindString(columns*i + 3, persons[inserted].secondName)
                     stmt.bindLong(columns*i + 4, persons[inserted].age.toLong())
                     inserted++
                 }
@@ -284,7 +284,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         val values = ContentValues()
 
         values.put(PersonSchema.COLUMN_FIRST_NAME, person.firstName)
-        values.put(PersonSchema.COLUMN_SECOND_NAME, person.secondsName)
+        values.put(PersonSchema.COLUMN_SECOND_NAME, person.secondName)
         values.put(PersonSchema.COLUMN_AGE, person.age)
 
         return values

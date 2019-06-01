@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "persons")
 data class PersonRoom (
     @ColumnInfo(name = "first_name") var firstName: String,
-    @ColumnInfo(name = "second_name") var secondsName: String,
+    @ColumnInfo(name = "second_name") var secondName: String,
     @ColumnInfo(name = "age") var age: Int
 ) {
 

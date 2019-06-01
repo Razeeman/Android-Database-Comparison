@@ -55,7 +55,7 @@ class TestSQLite(private val runner: Runner, private val dao : PersonSQLiteDao)
     private fun access(persons: List<PersonSQLite>) {
         persons.forEach {
             it.firstName
-            it.secondsName
+            it.secondName
             it.age
         }
     }
