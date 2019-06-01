@@ -1,6 +1,7 @@
 package com.example.database.comparison
 
 import com.example.database.comparison.dbms.greendao.PersonGreen
+import com.example.database.comparison.dbms.objectbox.PersonObjectbox
 import com.example.database.comparison.dbms.sqlite.model.PersonSQLite
 import com.example.database.comparison.model.Person
 import com.example.database.comparison.util.DataTransformer
@@ -27,6 +28,7 @@ class MockData {
 
         fun getPersonsSQLite(): List<PersonSQLite> =  DataTransformer.toPersonsSQLite(persons)
         fun getPersonsGreendao(): List<PersonGreen> =  DataTransformer.toPersonsGreendao(persons)
+        fun getPersonsObjectbox(): List<PersonObjectbox> =  DataTransformer.toPersonsObjectbox(persons)
 
     }
 
