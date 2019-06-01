@@ -44,7 +44,7 @@ class ObjectBoxTest {
     }
 
     @Test
-    fun insertInTx() {
+    fun create() {
         // With data in the database.
         dao.put(persons)
 
@@ -57,7 +57,7 @@ class ObjectBoxTest {
     }
 
     @Test
-    fun updateInTx_All() {
+    fun update_All() {
         // With data in the database.
         dao.put(persons)
 
@@ -72,7 +72,7 @@ class ObjectBoxTest {
     }
 
     @Test
-    fun updateInTx_One() {
+    fun update_One() {
         // With data in the database.
         dao.put(persons)
 
@@ -91,7 +91,7 @@ class ObjectBoxTest {
     }
 
     @Test
-    fun deleteInTx_All() {
+    fun delete_All() {
         // With data in the database.
         dao.put(persons)
 
@@ -105,7 +105,7 @@ class ObjectBoxTest {
     }
 
     @Test
-    fun deleteInTx_One() {
+    fun delete_One() {
         // With data in the database.
         dao.put(persons)
 

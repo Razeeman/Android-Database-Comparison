@@ -42,7 +42,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun insertInTx() {
+    fun create_InTx() {
         // With data in the database.
         dao.insertInTx(persons)
 
@@ -55,7 +55,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun insertRaw() {
+    fun create_Raw() {
         // With data in the database.
         dao.insertRaw(persons)
 
@@ -68,7 +68,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun insertBatched() {
+    fun create_Batched() {
         // With data in the database.
         dao.insertBatched(persons)
 
@@ -81,7 +81,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun updateInTx_All() {
+    fun update_InTx_All() {
         // With data in the database.
         dao.insertInTx(persons)
 
@@ -96,7 +96,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun updateInTx_One() {
+    fun update_InTx_One() {
         // With data in the database.
         dao.insertInTx(persons)
 
@@ -115,7 +115,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun updateRaw_All() {
+    fun update_Raw_All() {
         // With data in the database.
         dao.insertRaw(persons)
 
@@ -130,7 +130,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun updateRaw_One() {
+    fun update_Raw_One() {
         // With data in the database.
         dao.insertRaw(persons)
 
@@ -149,7 +149,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun updateBatched_All() {
+    fun update_Batched_All() {
         // With data in the database.
         dao.insertBatched(persons)
 
@@ -164,7 +164,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun updateBatched_One() {
+    fun update_Batched_One() {
         // With data in the database.
         dao.insertBatched(persons)
 
@@ -183,7 +183,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun deleteInTx_All() {
+    fun delete_InTx_All() {
         // With data in the database.
         dao.insertInTx(persons)
 
@@ -197,7 +197,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun deleteInTx_One() {
+    fun delete_InTx_One() {
         // With data in the database.
         dao.insertInTx(persons)
 
@@ -214,7 +214,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun deleteRaw_All() {
+    fun delete_Raw_All() {
         // With data in the database.
         dao.insertRaw(persons)
 
@@ -228,7 +228,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun deleteRaw_One() {
+    fun delete_Raw_One() {
         // With data in the database.
         dao.insertRaw(persons)
 
@@ -245,7 +245,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun deleteBatched_All() {
+    fun delete_Batched_All() {
         // With data in the database.
         dao.insertBatched(persons)
 
@@ -259,7 +259,7 @@ class SQLiteDaoTest {
     }
 
     @Test
-    fun deleteBatched_One() {
+    fun delete_Batched_One() {
         // With data in the database.
         dao.insertBatched(persons)
 
