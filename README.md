@@ -2,7 +2,7 @@
 
 Benchmark app to compare speed of CRUD operations of different android database management systems.
 
-Test are executed with a collection of 10000 objects of a simple model type. Execution times are averaged between 100 runs. Tests were run on the emulator.
+Test are executed with a collection of 10000 objects. Execution times are averaged between 100 runs. Tests were run on the emulator.
 
 - ```create(data: List<T>)``` Inserts list of objects into database.
 
@@ -17,7 +17,7 @@ Test are executed with a collection of 10000 objects of a simple model type. Exe
 ```kotlin
 data class Person (
     var firstName: String,
-    var secondsName: String,
+    var secondName: String,
     var age: Int
 )
 ```
