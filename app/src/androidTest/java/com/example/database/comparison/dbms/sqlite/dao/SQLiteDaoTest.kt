@@ -1,5 +1,6 @@
 package com.example.database.comparison.dbms.sqlite.dao
 
+import android.database.sqlite.SQLiteDatabase
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.database.comparison.MockData
 import com.example.database.comparison.dbms.sqlite.db.AppSQLiteDatabase
@@ -10,6 +11,7 @@ import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 
 class SQLiteDaoTest {
@@ -17,11 +19,21 @@ class SQLiteDaoTest {
     private lateinit var dao: PersonSQLiteDao
     private val persons = MockData.getPersonsSQLite()
 
+    companion object {
+
+        private lateinit var db: SQLiteDatabase
+
+        @BeforeClass
+        @JvmStatic
+        fun beforeClass() {
+            val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
+            db = AppSQLiteDatabase.get(context)
+        }
+    }
+
     @Before
     fun setUp() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-
-        dao = PersonSQLiteDao.get(AppSQLiteDatabase.get(context))
+        dao = PersonSQLiteDao.get(db)
     }
 
     @After

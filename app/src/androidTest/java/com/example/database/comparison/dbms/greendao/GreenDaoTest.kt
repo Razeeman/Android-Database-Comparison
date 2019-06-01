@@ -9,6 +9,7 @@ import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 
 class GreenDaoTest {
@@ -16,15 +17,23 @@ class GreenDaoTest {
     private lateinit var dao: PersonGreenDao
     private val persons = MockData.getPersonsGreendao()
 
+    companion object {
+
+        private lateinit var db: DaoMaster
+
+        @BeforeClass
+        @JvmStatic
+        fun beforeClass() {
+            val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
+            db = DaoMaster(DaoMaster
+                .DevOpenHelper(context, "greendao-database")
+                .writableDb)
+        }
+    }
+
     @Before
     fun setUp() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-
-        dao = DaoMaster(DaoMaster
-            .DevOpenHelper(context, "greendao-database")
-            .writableDb)
-            .newSession()
-            .personGreenDao
+        dao = db.newSession().personGreenDao
     }
 
     @After
