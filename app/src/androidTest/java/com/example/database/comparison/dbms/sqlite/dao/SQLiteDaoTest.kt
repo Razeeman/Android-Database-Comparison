@@ -19,8 +19,9 @@ class SQLiteDaoTest {
 
     @Before
     fun setUp() {
-        dao = PersonSQLiteDao.get(AppSQLiteDatabase.get(
-            InstrumentationRegistry.getInstrumentation().targetContext))
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+        dao = PersonSQLiteDao.get(AppSQLiteDatabase.get(context))
     }
 
     @After
@@ -260,5 +261,19 @@ class SQLiteDaoTest {
         // Then data deleted correctly.
         assertThat(reloaded.size, `is`(persons.size - 1))
         assertFalse(deleted in reloaded)
+    }
+
+    @Test
+    fun deleteAll() {
+        // With data in the database.
+        dao.insertInTx(persons)
+
+        // When data is deleted and reloaded.
+        val reloaded = dao.apply {
+            deleteAll()
+        }.getAll()
+
+        // Then data deleted correctly.
+        assertThat(reloaded.size, `is`(0))
     }
 }

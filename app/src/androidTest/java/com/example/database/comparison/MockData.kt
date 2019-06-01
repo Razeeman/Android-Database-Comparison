@@ -1,6 +1,9 @@
 package com.example.database.comparison
 
+import com.example.database.comparison.dbms.greendao.PersonGreen
 import com.example.database.comparison.dbms.sqlite.model.PersonSQLite
+import com.example.database.comparison.model.Person
+import com.example.database.comparison.util.DataTransformer
 
 class MockData {
 
@@ -16,11 +19,14 @@ class MockData {
         const val AGE2 = 20
         const val AGE3 = 30
 
-        val person1 = PersonSQLite(FIRST_NAME1, SECOND_NAME1, AGE1)
-        val person2 = PersonSQLite(FIRST_NAME2, SECOND_NAME2, AGE2)
-        val person3 = PersonSQLite(FIRST_NAME3, SECOND_NAME3, AGE3)
+        val person1 = Person(FIRST_NAME1, SECOND_NAME1, AGE1)
+        val person2 = Person(FIRST_NAME2, SECOND_NAME2, AGE2)
+        val person3 = Person(FIRST_NAME3, SECOND_NAME3, AGE3)
 
-        fun getPersonsSQLite(): List<PersonSQLite> =  listOf(person1, person2, person3)
+        val persons = listOf(person1, person2, person3)
+
+        fun getPersonsSQLite(): List<PersonSQLite> =  DataTransformer.toPersonsSQLite(persons)
+        fun getPersonsGreendao(): List<PersonGreen> =  DataTransformer.toPersonsGreendao(persons)
 
     }
 
