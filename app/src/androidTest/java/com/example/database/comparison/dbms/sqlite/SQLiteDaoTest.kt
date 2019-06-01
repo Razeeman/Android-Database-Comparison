@@ -1,8 +1,9 @@
-package com.example.database.comparison.dbms.sqlite.dao
+package com.example.database.comparison.dbms.sqlite
 
 import android.database.sqlite.SQLiteDatabase
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.database.comparison.MockData
+import com.example.database.comparison.dbms.sqlite.dao.PersonSQLiteDao
 import com.example.database.comparison.dbms.sqlite.db.AppSQLiteDatabase
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
@@ -33,7 +34,8 @@ class SQLiteDaoTest {
 
     @Before
     fun setUp() {
-        dao = PersonSQLiteDao.get(db)
+        dao =
+            PersonSQLiteDao.get(db)
     }
 
     @After
