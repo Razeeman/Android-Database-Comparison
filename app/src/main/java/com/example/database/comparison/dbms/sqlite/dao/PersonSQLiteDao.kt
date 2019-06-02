@@ -24,6 +24,10 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         }
     }
 
+    enum class TYPE {
+        INSERT, UPDATE, DELETE
+    }
+
     fun insertInTx(persons: List<PersonSQLite>) {
         database.transaction {
             for (person in persons) {
@@ -53,51 +57,8 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         }
     }
 
-    // TODO generalize batched insert, update and delete.
     fun insertBatched(persons: List<PersonSQLite>) {
-        val insert = "INSERT INTO ${PersonSchema.TABLE_NAME} " +
-                "(${PersonSchema.COLUMN_FIRST_NAME}, " +
-                "${PersonSchema.COLUMN_SECOND_NAME}, " +
-                "${PersonSchema.COLUMN_AGE}) VALUES "
-
-        val columns = 3
-        val insertions = persons.size
-        var inserted = 0
-        var batchSize = 999/columns
-
-        // Suppressed because SparseArray is slower.
-        @SuppressLint("UseSparseArrays")
-        val stmtCache = HashMap<Int, SQLiteStatement>()
-        var stmt: SQLiteStatement
-
-        database.transaction {
-
-            while (inserted < insertions) {
-
-                val rest = insertions - inserted
-                batchSize = if (rest > batchSize) batchSize else rest
-
-                stmt = stmtCache.getOrElse(batchSize) {
-                    val builder = StringBuilder()
-                    for (i: Int in 0 until batchSize) {
-                        if (i > 0) builder.append(", ")
-                        builder.append("(?, ?, ?)")
-                    }
-                    database.compileStatement(insert + builder.toString())
-                        .also { stmtCache[batchSize] = it }
-                }
-
-                for (i: Int in 0 until batchSize) {
-                    stmt.bindString(columns*i + 1, persons[inserted].firstName)
-                    stmt.bindString(columns*i + 2, persons[inserted].secondName)
-                    stmt.bindLong(columns*i + 3, persons[inserted].age.toLong())
-                    inserted++
-                }
-
-                stmt.execute()
-                stmt.clearBindings()
-            }
-        }
+        batched(TYPE.INSERT, persons)
     }
 
     fun getAll(): List<PersonSQLite> {
@@ -160,55 +121,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
     }
 
     fun updateBatched(persons: List<PersonSQLite>) {
-        val insert = "INSERT OR REPLACE INTO ${PersonSchema.TABLE_NAME} " +
-                "(${PersonSchema.COLUMN_ID}, " +
-                "${PersonSchema.COLUMN_FIRST_NAME}, " +
-                "${PersonSchema.COLUMN_SECOND_NAME}, " +
-                "${PersonSchema.COLUMN_AGE}) VALUES "
-
-        val columns = 4
-        val insertions = persons.size
-        var inserted = 0
-        var batchSize = 999/columns
-
-        // Suppressed because SparseArray is slower.
-        @SuppressLint("UseSparseArrays")
-        val stmtCache = HashMap<Int, SQLiteStatement>()
-        var stmt: SQLiteStatement
-
-        database.transaction {
-
-            while (inserted < insertions) {
-
-                val rest = insertions - inserted
-                batchSize = if (rest > batchSize) batchSize else rest
-
-                stmt = stmtCache.getOrElse(batchSize) {
-                    val builder = StringBuilder()
-                    for (i: Int in 0 until batchSize) {
-                        if (i > 0) builder.append(", ")
-                        builder.append("(?, ?, ?, ?)")
-                    }
-                    database.compileStatement(insert + builder.toString())
-                        .also { stmtCache[batchSize] = it }
-                }
-
-                var id: Long
-                for (i: Int in 0 until batchSize) {
-                    id = persons[inserted].id
-                    // Id of zero means that it is a new object, so it needs to be inserted.
-                    // Argument that are not bound will be defaulted to null and for id it means insert.
-                    if (id > 0) stmt.bindLong(columns*i + 1, id)
-                    stmt.bindString(columns*i + 2, persons[inserted].firstName)
-                    stmt.bindString(columns*i + 3, persons[inserted].secondName)
-                    stmt.bindLong(columns*i + 4, persons[inserted].age.toLong())
-                    inserted++
-                }
-
-                stmt.execute()
-                stmt.clearBindings()
-            }
-        }
+        batched(TYPE.UPDATE, persons)
     }
 
     @Delete
@@ -236,44 +149,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
     }
 
     fun deleteBatched(persons: List<PersonSQLite>) {
-        val delete = "DELETE FROM ${PersonSchema.TABLE_NAME} WHERE ${PersonSchema.COLUMN_ID} IN ("
-
-        val insertions = persons.size
-        var inserted = 0
-        var batchSize = 999
-
-        // Suppressed because SparseArray is slower.
-        @SuppressLint("UseSparseArrays")
-        val stmtCache = HashMap<Int, SQLiteStatement>()
-        var stmt: SQLiteStatement
-
-        database.transaction {
-
-            while (inserted < insertions) {
-
-                val rest = insertions - inserted
-                batchSize = if (rest > batchSize) batchSize else rest
-
-                stmt = stmtCache.getOrElse(batchSize) {
-                    val builder = StringBuilder()
-                    for (i: Int in 0 until batchSize) {
-                        if (i > 0) builder.append(", ")
-                        builder.append("?")
-                    }
-                    builder.append(")")
-                    database.compileStatement(delete + builder.toString())
-                        .also { stmtCache[batchSize] = it }
-                }
-
-                for (i: Int in 0 until batchSize) {
-                    stmt.bindLong(i + 1, persons[inserted].id)
-                    inserted++
-                }
-
-                stmt.execute()
-                stmt.clearBindings()
-            }
-        }
+        batched(TYPE.DELETE, persons)
     }
 
     fun deleteAll() {
@@ -288,6 +164,100 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         values.put(PersonSchema.COLUMN_AGE, person.age)
 
         return values
+    }
+
+    /**
+     * Creates a sqlite statement to insert/update/delete data in batches.
+     *
+     * @param type [TYPE] of the operation to execute.
+     * @param data data to process.
+     */
+    private fun batched(type: TYPE, data: List<PersonSQLite>) {
+        val stmtBase = when (type) {
+            TYPE.INSERT -> "INSERT INTO ${PersonSchema.TABLE_NAME} " +
+                    "(${PersonSchema.COLUMN_FIRST_NAME}, " +
+                    "${PersonSchema.COLUMN_SECOND_NAME}, " +
+                    "${PersonSchema.COLUMN_AGE}) VALUES "
+            TYPE.UPDATE -> "INSERT OR REPLACE INTO ${PersonSchema.TABLE_NAME} " +
+                    "(${PersonSchema.COLUMN_ID}, " +
+                    "${PersonSchema.COLUMN_FIRST_NAME}, " +
+                    "${PersonSchema.COLUMN_SECOND_NAME}, " +
+                    "${PersonSchema.COLUMN_AGE}) VALUES "
+            TYPE.DELETE -> "DELETE FROM ${PersonSchema.TABLE_NAME} WHERE " +
+                    "${PersonSchema.COLUMN_ID} IN ("
+        }
+
+        val columns = when (type) {
+            TYPE.INSERT -> 3 // Number of columns in the table schema minus id column.
+            TYPE.UPDATE -> 4 // Number of columns in the table schema.
+            TYPE.DELETE -> 1 // Only id column is used.
+        }
+
+        val stmtPart = when (type) {
+            TYPE.INSERT -> "(?, ?, ?)"    // Number of columns in the table schema minus id column.
+            TYPE.UPDATE -> "(?, ?, ?, ?)" // Number of columns in the table schema.
+            TYPE.DELETE -> "?"            // Only id column is used.
+        }
+
+        val total = data.size         // Total number of data points to insert/update/delete.
+        var processed = 0             // Processed number of data points.
+        var rest: Int                 // Number of data points yet to process.
+        var batchSize = 999/columns   // Maximum batch of data points to process in one statement.
+        val builder = StringBuilder()
+        var id: Long
+
+        // Suppressed because SparseArray is slower.
+        @SuppressLint("UseSparseArrays")
+        val stmtCache = HashMap<Int, SQLiteStatement>()
+        var stmt: SQLiteStatement
+
+        database.transaction {
+
+            while (processed < total) {
+
+                rest = total - processed
+                batchSize = if (rest > batchSize) batchSize else rest
+
+                // Prepare part of the statement that hold value bindings, create new or get from cache.
+                stmt = stmtCache.getOrElse(batchSize) {
+                    builder.clear()
+                    for (i: Int in 0 until batchSize) {
+                        if (i > 0) builder.append(", ")
+                        builder.append(stmtPart)
+                    }
+                    if (type == TYPE.DELETE) builder.append(")")
+                    database.compileStatement(stmtBase + builder.toString())
+                        .also { stmtCache[batchSize] = it }
+                }
+
+                // Bind data points to bindings in the statement.
+                for (i: Int in 0 until batchSize) {
+                    when (type) {
+                        TYPE.INSERT -> {
+                            stmt.bindString(columns*i + 1, data[processed].firstName)
+                            stmt.bindString(columns*i + 2, data[processed].secondName)
+                            stmt.bindLong(columns*i + 3, data[processed].age.toLong())
+                        }
+                        TYPE.UPDATE -> {
+                            id = data[processed].id
+                            // Id of zero means that it is a new object, so it needs to be inserted.
+                            // Argument that are not bound will be defaulted to null and for id it means insert.
+                            if (id > 0) stmt.bindLong(columns*i + 1, id)
+                            stmt.bindString(columns*i + 2, data[processed].firstName)
+                            stmt.bindString(columns*i + 3, data[processed].secondName)
+                            stmt.bindLong(columns*i + 4, data[processed].age.toLong())
+                        }
+                        TYPE.DELETE -> {
+                            stmt.bindLong(i + 1, data[processed].id)
+                        }
+                    }
+                    processed++
+                }
+
+                stmt.execute()
+                stmt.clearBindings()
+            }
+        }
     }
 
 }
