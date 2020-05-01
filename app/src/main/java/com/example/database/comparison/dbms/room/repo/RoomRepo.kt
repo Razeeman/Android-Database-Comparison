@@ -3,7 +3,7 @@ package com.example.database.comparison.dbms.room.repo
 import com.example.database.comparison.base.BaseRepo
 import com.example.database.comparison.dbms.room.dao.PersonRoomDao
 import com.example.database.comparison.dbms.room.model.PersonRoom
-import com.example.database.comparison.model.BasePerson
+import com.example.database.comparison.model.Person
 import com.example.database.comparison.util.DataTransformer
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,29 +11,23 @@ import javax.inject.Singleton
 @Singleton
 class RoomRepo @Inject constructor(
     private var dao: PersonRoomDao
-) : BaseRepo {
+) : BaseRepo<PersonRoom> {
 
     override val name: String = "Room"
 
-    override fun addAll(persons: List<BasePerson>) {
-        persons as List<PersonRoom>
-
+    override fun addAll(persons: List<PersonRoom>) {
         dao.insertInTx(persons)
     }
 
-    override fun loadAll(): List<BasePerson> {
+    override fun loadAll(): List<PersonRoom> {
         return dao.getAll()
     }
 
-    override fun updateAll(persons: List<BasePerson>) {
-        persons as List<PersonRoom>
-
+    override fun updateAll(persons: List<PersonRoom>) {
         dao.updateInTx(persons)
     }
 
-    override fun deleteAll(persons: List<BasePerson>) {
-        persons as List<PersonRoom>
-
+    override fun deleteAll(persons: List<PersonRoom>) {
         dao.deleteInTx(persons)
     }
 
@@ -41,7 +35,7 @@ class RoomRepo @Inject constructor(
         dao.deleteAll()
     }
 
-    override fun transformData(data: List<BasePerson>): List<BasePerson> {
+    override fun transformData(data: List<Person>): List<PersonRoom> {
         return DataTransformer.toPersonsRoom(data)
     }
 }

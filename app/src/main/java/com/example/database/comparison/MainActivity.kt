@@ -19,7 +19,6 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        @Suppress("unused") // Suppressed to not bother adding later.
         private const val TAG = "CUSTOM_TAG"
 
         private const val NUMBER_OF_OBJECTS = 10000
@@ -45,9 +44,7 @@ class MainActivity : AppCompatActivity() {
     private fun runTests() {
         val logger = Logger()
         val runner = Runner(logger)
-        val dataProvider = DataProvider()
-
-        val persons = dataProvider.getPersons(NUMBER_OF_OBJECTS)
+        val persons = DataProvider.getPersons(NUMBER_OF_OBJECTS)
 
         val repos = listOf(
             sqliteRepo,

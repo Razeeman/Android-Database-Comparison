@@ -1,21 +1,23 @@
 package com.example.database.comparison.test.old
 
+import com.example.database.comparison.base.BaseTest
 import com.example.database.comparison.dbms.room.dao.PersonRoomDao
 import com.example.database.comparison.dbms.room.model.PersonRoom
-import com.example.database.comparison.model.BasePerson
-import com.example.database.comparison.base.BaseTest
+import com.example.database.comparison.model.Person
 import com.example.database.comparison.util.DataTransformer
 import com.example.database.comparison.util.Runner
 import java.util.*
 
-class TestRoom(private val runner: Runner, private val dao : PersonRoomDao)
-    : BaseTest {
+class TestRoom(
+    private val runner: Runner,
+    private val dao: PersonRoomDao
+) : BaseTest {
 
     companion object {
         const val NAME = "Room"
     }
 
-    override fun run(runs: Int, data: List<BasePerson>) {
+    override fun run(runs: Int, data: List<Person>) {
 
         val persons = DataTransformer.toPersonsRoom(data)
         var reloaded: List<PersonRoom> = ArrayList()

@@ -1,21 +1,23 @@
 package com.example.database.comparison.test.old
 
-import com.example.database.comparison.dbms.greendao.model.PersonGreen
-import com.example.database.comparison.dbms.greendao.PersonGreenDao
-import com.example.database.comparison.model.BasePerson
 import com.example.database.comparison.base.BaseTest
+import com.example.database.comparison.dbms.greendao.PersonGreenDao
+import com.example.database.comparison.dbms.greendao.model.PersonGreen
+import com.example.database.comparison.model.Person
 import com.example.database.comparison.util.DataTransformer
 import com.example.database.comparison.util.Runner
 import java.util.*
 
-class TestGreendao(private val runner: Runner, private val dao : PersonGreenDao)
-    : BaseTest {
+class TestGreendao(
+    private val runner: Runner,
+    private val dao: PersonGreenDao
+) : BaseTest {
 
     companion object {
         const val NAME = "GreenDao"
     }
 
-    override fun run(runs: Int, data: List<BasePerson>) {
+    override fun run(runs: Int, data: List<Person>) {
 
         val persons = DataTransformer.toPersonsGreendao(data)
         var reloaded: List<PersonGreen> = ArrayList()

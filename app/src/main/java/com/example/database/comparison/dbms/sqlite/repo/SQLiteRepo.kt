@@ -3,7 +3,7 @@ package com.example.database.comparison.dbms.sqlite.repo
 import com.example.database.comparison.base.BaseRepo
 import com.example.database.comparison.dbms.sqlite.dao.PersonSQLiteDao
 import com.example.database.comparison.dbms.sqlite.model.PersonSQLite
-import com.example.database.comparison.model.BasePerson
+import com.example.database.comparison.model.Person
 import com.example.database.comparison.util.DataTransformer
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,29 +11,23 @@ import javax.inject.Singleton
 @Singleton
 class SQLiteRepo @Inject constructor(
     private var dao: PersonSQLiteDao
-) : BaseRepo {
+) : BaseRepo<PersonSQLite> {
 
     override val name: String = "SQLite"
 
-    override fun addAll(persons: List<BasePerson>) {
-        persons as List<PersonSQLite>
-
+    override fun addAll(persons: List<PersonSQLite>) {
         dao.insertInTx(persons)
     }
 
-    override fun loadAll(): List<BasePerson> {
+    override fun loadAll(): List<PersonSQLite> {
         return dao.getAll()
     }
 
-    override fun updateAll(persons: List<BasePerson>) {
-        persons as List<PersonSQLite>
-
+    override fun updateAll(persons: List<PersonSQLite>) {
         dao.updateInTx(persons)
     }
 
-    override fun deleteAll(persons: List<BasePerson>) {
-        persons as List<PersonSQLite>
-
+    override fun deleteAll(persons: List<PersonSQLite>) {
         dao.deleteInTx(persons)
     }
 
@@ -41,7 +35,7 @@ class SQLiteRepo @Inject constructor(
         dao.deleteAll()
     }
 
-    override fun transformData(data: List<BasePerson>): List<BasePerson> {
+    override fun transformData(data: List<Person>): List<PersonSQLite> {
         return DataTransformer.toPersonsSQLite(data)
     }
 }

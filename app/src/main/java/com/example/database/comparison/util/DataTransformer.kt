@@ -5,13 +5,13 @@ import com.example.database.comparison.dbms.objectbox.model.PersonObjectbox
 import com.example.database.comparison.dbms.realm.model.PersonRealm
 import com.example.database.comparison.dbms.room.model.PersonRoom
 import com.example.database.comparison.dbms.sqlite.model.PersonSQLite
-import com.example.database.comparison.model.BasePerson
+import com.example.database.comparison.model.Person
 
 class DataTransformer private constructor() {
 
     companion object {
 
-        private fun toPersonSQLite(person: BasePerson): PersonSQLite {
+        private fun toPersonSQLite(person: Person): PersonSQLite {
             return PersonSQLite(
                 person.firstName,
                 person.secondName,
@@ -19,11 +19,11 @@ class DataTransformer private constructor() {
             )
         }
 
-        fun toPersonsSQLite(persons: List<BasePerson>): List<PersonSQLite> {
+        fun toPersonsSQLite(persons: List<Person>): List<PersonSQLite> {
             return persons.map(::toPersonSQLite)
         }
 
-        private fun toPersonGreendao(person: BasePerson): PersonGreen {
+        private fun toPersonGreendao(person: Person): PersonGreen {
             return PersonGreen(
                 person.firstName,
                 person.secondName,
@@ -31,11 +31,11 @@ class DataTransformer private constructor() {
             )
         }
 
-        fun toPersonsGreendao(persons: List<BasePerson>): List<PersonGreen> {
+        fun toPersonsGreendao(persons: List<Person>): List<PersonGreen> {
             return persons.map(::toPersonGreendao)
         }
 
-        private fun toPersonObjectbox(person: BasePerson): PersonObjectbox {
+        private fun toPersonObjectbox(person: Person): PersonObjectbox {
             return PersonObjectbox(
                 person.firstName,
                 person.secondName,
@@ -43,11 +43,11 @@ class DataTransformer private constructor() {
             )
         }
 
-        fun toPersonsObjectbox(persons: List<BasePerson>): List<PersonObjectbox> {
+        fun toPersonsObjectbox(persons: List<Person>): List<PersonObjectbox> {
             return persons.map(::toPersonObjectbox)
         }
 
-        private fun toPersonRoom(person: BasePerson): PersonRoom {
+        private fun toPersonRoom(person: Person): PersonRoom {
             return PersonRoom(
                 person.firstName,
                 person.secondName,
@@ -55,11 +55,11 @@ class DataTransformer private constructor() {
             )
         }
 
-        fun toPersonsRoom(persons: List<BasePerson>): List<PersonRoom> {
+        fun toPersonsRoom(persons: List<Person>): List<PersonRoom> {
             return persons.map(::toPersonRoom)
         }
 
-        private fun toPersonRealm(person: BasePerson): PersonRealm {
+        private fun toPersonRealm(person: Person): PersonRealm {
             return PersonRealm(
                 person.firstName,
                 person.secondName,
@@ -67,7 +67,7 @@ class DataTransformer private constructor() {
             )
         }
 
-        fun toPersonsRealm(persons: List<BasePerson>): List<PersonRealm> {
+        fun toPersonsRealm(persons: List<Person>): List<PersonRealm> {
             return persons.map {
                 toPersonRealm(it).also { personRealm ->
                     personRealm.id = PersonRealm.objectCounter

@@ -2,21 +2,21 @@ package com.example.database.comparison.test
 
 import com.example.database.comparison.base.BaseRepo
 import com.example.database.comparison.model.BasePerson
+import com.example.database.comparison.model.Person
 import com.example.database.comparison.util.Runner
-import java.util.*
 
-class Test(
+class Test<T : BasePerson>(
     private val runner: Runner,
-    private val repo: BaseRepo
+    private val repo: BaseRepo<T>
 ) {
 
     private val name = repo.name
 
-    fun run(runs: Int, data: List<BasePerson>) {
+    fun run(runs: Int, data: List<Person>) {
 
         val persons = repo.transformData(data)
-        var reloaded: List<BasePerson> = ArrayList()
-        var updated: List<BasePerson> = ArrayList()
+        var reloaded: List<T> = emptyList()
+        var updated: List<T> = emptyList()
 
         runner
             .beforeEach { repo.clear() }

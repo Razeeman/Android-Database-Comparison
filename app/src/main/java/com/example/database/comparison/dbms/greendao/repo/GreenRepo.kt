@@ -3,7 +3,7 @@ package com.example.database.comparison.dbms.greendao.repo
 import com.example.database.comparison.base.BaseRepo
 import com.example.database.comparison.dbms.greendao.PersonGreenDao
 import com.example.database.comparison.dbms.greendao.model.PersonGreen
-import com.example.database.comparison.model.BasePerson
+import com.example.database.comparison.model.Person
 import com.example.database.comparison.util.DataTransformer
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,29 +11,23 @@ import javax.inject.Singleton
 @Singleton
 class GreenRepo @Inject constructor(
     private var dao: PersonGreenDao
-) : BaseRepo {
+) : BaseRepo<PersonGreen> {
 
     override val name: String = "GreenDao"
 
-    override fun addAll(persons: List<BasePerson>) {
-        persons as List<PersonGreen>
-
+    override fun addAll(persons: List<PersonGreen>) {
         dao.insertInTx(persons)
     }
 
-    override fun loadAll(): List<BasePerson> {
+    override fun loadAll(): List<PersonGreen> {
         return dao.loadAll()
     }
 
-    override fun updateAll(persons: List<BasePerson>) {
-        persons as List<PersonGreen>
-
+    override fun updateAll(persons: List<PersonGreen>) {
         dao.updateInTx(persons)
     }
 
-    override fun deleteAll(persons: List<BasePerson>) {
-        persons as List<PersonGreen>
-
+    override fun deleteAll(persons: List<PersonGreen>) {
         dao.deleteInTx(persons)
     }
 
@@ -41,7 +35,7 @@ class GreenRepo @Inject constructor(
         dao.deleteAll()
     }
 
-    override fun transformData(data: List<BasePerson>): List<BasePerson> {
+    override fun transformData(data: List<Person>): List<PersonGreen> {
         return DataTransformer.toPersonsGreendao(data)
     }
 }

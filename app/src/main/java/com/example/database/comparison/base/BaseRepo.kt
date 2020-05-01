@@ -1,22 +1,23 @@
 package com.example.database.comparison.base
 
 import com.example.database.comparison.model.BasePerson
+import com.example.database.comparison.model.Person
 import com.example.database.comparison.util.DataProvider
 
-interface BaseRepo {
+interface BaseRepo<T : BasePerson> {
 
     val name: String
 
-    fun addAll(persons: List<BasePerson>)
-    fun loadAll(): List<BasePerson>
-    fun updateAll(persons: List<BasePerson>)
-    fun deleteAll(persons: List<BasePerson>)
+    fun addAll(persons: List<T>)
+    fun loadAll(): List<T>
+    fun updateAll(persons: List<T>)
+    fun deleteAll(persons: List<T>)
 
     fun clear()
 
-    fun transformData(data: List<BasePerson>): List<BasePerson>
+    fun transformData(data: List<Person>): List<T>
 
-    fun access(persons: List<BasePerson>) {
+    fun access(persons: List<T>) {
         persons.forEach {
             it.firstName
             it.secondName
@@ -24,7 +25,7 @@ interface BaseRepo {
         }
     }
 
-    fun change(persons: List<BasePerson>): List<BasePerson> {
+    fun change(persons: List<T>): List<T> {
         return persons.map { it.also { it.age = DataProvider.getInt() } }
     }
 }

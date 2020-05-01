@@ -1,6 +1,5 @@
 package com.example.database.comparison.util
 
-import com.example.database.comparison.model.BasePerson
 import com.example.database.comparison.model.Person
 import java.util.*
 import kotlin.collections.ArrayList
@@ -35,30 +34,29 @@ class DataProvider {
             }
             return sb.toString()
         }
-    }
 
-    /**
-     * Provides random person.
-     */
-    private fun getPerson(): BasePerson {
-        return Person(
-            firstName = getString(),
-            secondName = getString(),
-            age = getInt()
-        )
-    }
+        /**
+         * Provides list of number of random persons.
+         */
+        fun getPersons(num: Int): List<Person> {
+            val list = ArrayList<Person>()
 
-    /**
-     * Provides list of number of random persons.
-     */
-    fun getPersons(num: Int): List<BasePerson> {
-        val list = ArrayList<BasePerson>()
+            for (i in 0 until num) {
+                list.add(getPerson())
+            }
 
-        for (i in 0 until num) {
-            list.add(getPerson())
+            return list
         }
 
-        return list
+        /**
+         * Provides random person.
+         */
+        private fun getPerson(): Person {
+            return Person(
+                firstName = getString(),
+                secondName = getString(),
+                age = getInt()
+            )
+        }
     }
-
 }

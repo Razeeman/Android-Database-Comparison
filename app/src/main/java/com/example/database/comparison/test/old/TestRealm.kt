@@ -1,27 +1,26 @@
 package com.example.database.comparison.test.old
 
-import com.example.database.comparison.dbms.realm.model.PersonRealm
-import com.example.database.comparison.model.BasePerson
 import com.example.database.comparison.base.BaseTest
+import com.example.database.comparison.dbms.realm.model.PersonRealm
+import com.example.database.comparison.model.Person
 import com.example.database.comparison.util.DataTransformer
 import com.example.database.comparison.util.Runner
 import io.realm.Realm
 import io.realm.RealmResults
-import java.util.*
 
-class TestRealm(private val runner: Runner, private val dao : Realm)
-    : BaseTest {
+class TestRealm(
+    private val runner: Runner,
+    private val dao: Realm
+) : BaseTest {
 
     companion object {
         const val NAME = "Realm"
     }
 
-    override fun run(runs: Int, data: List<BasePerson>) {
+    override fun run(runs: Int, data: List<Person>) {
 
         val persons = DataTransformer.toPersonsRealm(data)
-
-        var results: RealmResults<PersonRealm>? = null
-        var managed: List<PersonRealm> = ArrayList()
+        var reloaded: List<PersonRealm> = emptyList()
 
         runner
             .beforeEach {
@@ -37,27 +36,28 @@ class TestRealm(private val runner: Runner, private val dao : Realm)
                 dao.executeTransaction { it.insert(persons) }
             }
             .run("$NAME-read", runs) {
-                results = dao.where(PersonRealm::class.java).findAll()
-                access(results!!)
-            }
-
-        runner
-            .beforeEach {
-                dao.executeTransaction { it.delete(PersonRealm::class.java) }
-                dao.executeTransaction { managed = dao.copyToRealm(persons) }
-            }
-            .run("$NAME-update", runs) {
-                dao.executeTransaction { change(managed) }
+                reloaded = dao.where(PersonRealm::class.java).findAll()
+                access(reloaded)
             }
 
         runner
             .beforeEach {
                 dao.executeTransaction { it.delete(PersonRealm::class.java) }
                 dao.executeTransaction { it.insert(persons) }
-                results = dao.where(PersonRealm::class.java).findAll()
+                reloaded = dao.where(PersonRealm::class.java).findAll()
+            }
+            .run("$NAME-update", runs) {
+                dao.executeTransaction { change(reloaded) }
+            }
+
+        runner
+            .beforeEach {
+                dao.executeTransaction { it.delete(PersonRealm::class.java) }
+                dao.executeTransaction { it.insert(persons) }
+                reloaded = dao.where(PersonRealm::class.java).findAll()
             }
             .run("$NAME-delete", runs) {
-                dao.executeTransaction { results!!.deleteAllFromRealm() }
+                dao.executeTransaction { (reloaded as RealmResults).deleteAllFromRealm() }
             }
     }
 
