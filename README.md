@@ -16,6 +16,7 @@ Test are executed with a collection of 10000 objects. Execution times are averag
 
 ```kotlin
 data class Person (
+    var id: Long,
     var firstName: String,
     var secondName: String,
     var age: Int
