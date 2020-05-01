@@ -24,10 +24,14 @@ class GreenDaoTest {
         @BeforeClass
         @JvmStatic
         fun beforeClass() {
-            val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
-            db = DaoMaster(DaoMaster
-                .DevOpenHelper(context, "greendao-database")
-                .writableDb)
+            val context = InstrumentationRegistry
+                .getInstrumentation()
+                .targetContext
+                .applicationContext
+            db = DaoMaster(
+                DaoMaster.DevOpenHelper(context, "greendao-database")
+                    .writableDb
+            )
         }
     }
 
@@ -76,7 +80,7 @@ class GreenDaoTest {
 
         // When data is updated and reloaded.
         val updated = dao.loadAll()[0]
-                .apply { age = 0 }
+            .apply { age = 0 }
         val reloaded = dao.apply {
             updateInTx(listOf(updated))
         }.loadAll()
@@ -109,7 +113,7 @@ class GreenDaoTest {
 
         // When data is deleted and reloaded.
         val deleted = dao.loadAll()[0]
-                .apply { age = 0 }
+            .apply { age = 0 }
         val reloaded = dao.apply {
             deleteInTx(listOf(deleted))
         }.loadAll()

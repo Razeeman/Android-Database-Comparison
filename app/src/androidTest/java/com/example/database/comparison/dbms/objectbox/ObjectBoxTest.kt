@@ -2,6 +2,8 @@ package com.example.database.comparison.dbms.objectbox
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.database.comparison.MockData
+import com.example.database.comparison.dbms.objectbox.model.MyObjectBox
+import com.example.database.comparison.dbms.objectbox.model.PersonObjectbox
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import org.hamcrest.CoreMatchers.`is`

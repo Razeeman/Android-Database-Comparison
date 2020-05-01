@@ -1,7 +1,8 @@
-package com.example.database.comparison.test
+package com.example.database.comparison.test.old
 
-import com.example.database.comparison.dbms.objectbox.PersonObjectbox
-import com.example.database.comparison.model.Person
+import com.example.database.comparison.dbms.objectbox.model.PersonObjectbox
+import com.example.database.comparison.model.BasePerson
+import com.example.database.comparison.base.BaseTest
 import com.example.database.comparison.util.DataTransformer
 import com.example.database.comparison.util.Runner
 import io.objectbox.Box
@@ -14,7 +15,7 @@ class TestObjectbox(private val runner: Runner, private val dao : Box<PersonObje
         const val NAME = "ObjectBox"
     }
 
-    override fun run(runs: Int, data: List<Person>) {
+    override fun run(runs: Int, data: List<BasePerson>) {
 
         val persons = DataTransformer.toPersonsObjectbox(data)
         var reloaded: List<PersonObjectbox> = ArrayList()

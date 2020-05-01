@@ -1,7 +1,8 @@
-package com.example.database.comparison.test
+package com.example.database.comparison.test.old
 
-import com.example.database.comparison.dbms.realm.PersonRealm
-import com.example.database.comparison.model.Person
+import com.example.database.comparison.dbms.realm.model.PersonRealm
+import com.example.database.comparison.model.BasePerson
+import com.example.database.comparison.base.BaseTest
 import com.example.database.comparison.util.DataTransformer
 import com.example.database.comparison.util.Runner
 import io.realm.Realm
@@ -15,7 +16,7 @@ class TestRealm(private val runner: Runner, private val dao : Realm)
         const val NAME = "Realm"
     }
 
-    override fun run(runs: Int, data: List<Person>) {
+    override fun run(runs: Int, data: List<BasePerson>) {
 
         val persons = DataTransformer.toPersonsRealm(data)
 

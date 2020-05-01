@@ -14,7 +14,8 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
     companion object {
 
         // Dao instance.
-        @Volatile private var instance: PersonSQLiteDao? = null
+        @Volatile
+        private var instance: PersonSQLiteDao? = null
 
         // Singleton instantiation.
         fun get(database: SQLiteDatabase): PersonSQLiteDao {
@@ -31,9 +32,11 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
     fun insertInTx(persons: List<PersonSQLite>) {
         database.transaction {
             for (person in persons) {
-                insert(PersonSchema.TABLE_NAME,
+                insert(
+                    PersonSchema.TABLE_NAME,
                     null,
-                    getContentValues(person))
+                    getContentValues(person)
+                )
             }
         }
     }
@@ -71,7 +74,8 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
             null,
             null,
             null,
-            null)
+            null
+        )
 
         cursor.use {
             cursor.moveToPosition(-1)
@@ -79,7 +83,32 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
                 val person = PersonSQLite(
                     cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_FIRST_NAME)),
                     cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_SECOND_NAME)),
-                    cursor.getInt(cursor.getColumnIndex(PersonSchema.COLUMN_AGE)))
+                    cursor.getInt(cursor.getColumnIndex(PersonSchema.COLUMN_AGE))
+                )
+                    .also { it.id = cursor.getLong(cursor.getColumnIndex(PersonSchema.COLUMN_ID)) }
+
+                persons.add(person)
+            }
+        }
+
+        return persons
+    }
+
+    fun getAllRaw(): List<PersonSQLite> {
+        val persons = ArrayList<PersonSQLite>()
+
+        val cursor = database.rawQuery(
+            "SELECT * FROM ${PersonSchema.TABLE_NAME}", emptyArray()
+        )
+
+        cursor.use {
+            cursor.moveToPosition(-1)
+            while (cursor.moveToNext()) {
+                val person = PersonSQLite(
+                    cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_FIRST_NAME)),
+                    cursor.getString(cursor.getColumnIndex(PersonSchema.COLUMN_SECOND_NAME)),
+                    cursor.getInt(cursor.getColumnIndex(PersonSchema.COLUMN_AGE))
+                )
                     .also { it.id = cursor.getLong(cursor.getColumnIndex(PersonSchema.COLUMN_ID)) }
 
                 persons.add(person)
@@ -92,10 +121,12 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
     fun updateInTx(persons: List<PersonSQLite>) {
         database.transaction {
             for (person in persons) {
-                update(PersonSchema.TABLE_NAME,
+                update(
+                    PersonSchema.TABLE_NAME,
                     getContentValues(person),
                     "${PersonSchema.COLUMN_ID} = ${person.id}",
-                    null)
+                    null
+                )
             }
         }
     }
@@ -128,9 +159,11 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
     fun deleteInTx(persons: List<PersonSQLite>) {
         database.transaction {
             for (person in persons) {
-                delete(PersonSchema.TABLE_NAME,
+                delete(
+                    PersonSchema.TABLE_NAME,
                     "${PersonSchema.COLUMN_ID} = ${person.id}",
-                    null)
+                    null
+                )
             }
         }
     }
@@ -153,6 +186,10 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
     }
 
     fun deleteAll() {
+        database.delete(PersonSchema.TABLE_NAME, null, null)
+    }
+
+    fun deleteAllRaw() {
         database.execSQL("DELETE FROM ${PersonSchema.TABLE_NAME}")
     }
 
@@ -202,7 +239,7 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
         val total = data.size         // Total number of data points to insert/update/delete.
         var processed = 0             // Processed number of data points.
         var rest: Int                 // Number of data points yet to process.
-        var batchSize = 999/columns   // Maximum batch of data points to process in one statement.
+        var batchSize = 999 / columns // Maximum batch of data points to process in one statement.
         val builder = StringBuilder()
         var id: Long
 
@@ -234,18 +271,18 @@ class PersonSQLiteDao private constructor(private var database: SQLiteDatabase) 
                 for (i: Int in 0 until batchSize) {
                     when (type) {
                         TYPE.INSERT -> {
-                            stmt.bindString(columns*i + 1, data[processed].firstName)
-                            stmt.bindString(columns*i + 2, data[processed].secondName)
-                            stmt.bindLong(columns*i + 3, data[processed].age.toLong())
+                            stmt.bindString(columns * i + 1, data[processed].firstName)
+                            stmt.bindString(columns * i + 2, data[processed].secondName)
+                            stmt.bindLong(columns * i + 3, data[processed].age.toLong())
                         }
                         TYPE.UPDATE -> {
                             id = data[processed].id
                             // Id of zero means that it is a new object, so it needs to be inserted.
                             // Argument that are not bound will be defaulted to null and for id it means insert.
-                            if (id > 0) stmt.bindLong(columns*i + 1, id)
-                            stmt.bindString(columns*i + 2, data[processed].firstName)
-                            stmt.bindString(columns*i + 3, data[processed].secondName)
-                            stmt.bindLong(columns*i + 4, data[processed].age.toLong())
+                            if (id > 0) stmt.bindLong(columns * i + 1, id)
+                            stmt.bindString(columns * i + 2, data[processed].firstName)
+                            stmt.bindString(columns * i + 3, data[processed].secondName)
+                            stmt.bindLong(columns * i + 4, data[processed].age.toLong())
                         }
                         TYPE.DELETE -> {
                             stmt.bindLong(i + 1, data[processed].id)

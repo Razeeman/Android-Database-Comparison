@@ -20,5 +20,4 @@ interface PersonRoomDao {
 
     @Query("DELETE FROM persons")
     fun deleteAll()
-
 }

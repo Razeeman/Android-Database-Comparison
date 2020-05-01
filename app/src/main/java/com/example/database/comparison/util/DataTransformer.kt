@@ -1,77 +1,78 @@
 package com.example.database.comparison.util
 
-import com.example.database.comparison.dbms.greendao.PersonGreen
-import com.example.database.comparison.model.Person
-import com.example.database.comparison.dbms.objectbox.PersonObjectbox
-import com.example.database.comparison.dbms.realm.PersonRealm
+import com.example.database.comparison.dbms.greendao.model.PersonGreen
+import com.example.database.comparison.dbms.objectbox.model.PersonObjectbox
+import com.example.database.comparison.dbms.realm.model.PersonRealm
 import com.example.database.comparison.dbms.room.model.PersonRoom
 import com.example.database.comparison.dbms.sqlite.model.PersonSQLite
+import com.example.database.comparison.model.BasePerson
 
 class DataTransformer private constructor() {
 
     companion object {
 
-        fun toPersonSQLite(person: Person): PersonSQLite {
+        private fun toPersonSQLite(person: BasePerson): PersonSQLite {
             return PersonSQLite(
                 person.firstName,
-                person.secondsName,
+                person.secondName,
                 person.age
             )
         }
 
-        fun toPersonsSQLite(persons: List<Person>): List<PersonSQLite> {
-            return persons.map { toPersonSQLite(it) }
+        fun toPersonsSQLite(persons: List<BasePerson>): List<PersonSQLite> {
+            return persons.map(::toPersonSQLite)
         }
 
-        fun toPersonGreendao(person: Person): PersonGreen {
+        private fun toPersonGreendao(person: BasePerson): PersonGreen {
             return PersonGreen(
                 person.firstName,
-                person.secondsName,
+                person.secondName,
                 person.age
             )
         }
 
-        fun toPersonsGreendao(persons: List<Person>): List<PersonGreen> {
-            return persons.map { toPersonGreendao(it) }
+        fun toPersonsGreendao(persons: List<BasePerson>): List<PersonGreen> {
+            return persons.map(::toPersonGreendao)
         }
 
-        fun toPersonObjectbox(person: Person): PersonObjectbox {
+        private fun toPersonObjectbox(person: BasePerson): PersonObjectbox {
             return PersonObjectbox(
                 person.firstName,
-                person.secondsName,
+                person.secondName,
                 person.age
             )
         }
 
-        fun toPersonsObjectbox(persons: List<Person>): List<PersonObjectbox> {
-            return persons.map { toPersonObjectbox(it) }
+        fun toPersonsObjectbox(persons: List<BasePerson>): List<PersonObjectbox> {
+            return persons.map(::toPersonObjectbox)
         }
 
-        fun toPersonRoom(person: Person): PersonRoom {
+        private fun toPersonRoom(person: BasePerson): PersonRoom {
             return PersonRoom(
                 person.firstName,
-                person.secondsName,
-                person.age)
-        }
-
-        fun toPersonsRoom(persons: List<Person>): List<PersonRoom> {
-            return persons.map { toPersonRoom(it) }
-        }
-
-        fun toPersonRealm(person: Person): PersonRealm {
-            return PersonRealm(
-                person.firstName,
-                person.secondsName,
+                person.secondName,
                 person.age
             )
         }
 
-        fun toPersonsRealm(persons: List<Person>): List<PersonRealm> {
-            return persons.map { toPersonRealm(it).also {
-                    personRealm -> personRealm.id = PersonRealm.objectCounter }
-            }
+        fun toPersonsRoom(persons: List<BasePerson>): List<PersonRoom> {
+            return persons.map(::toPersonRoom)
         }
 
-    }
+        private fun toPersonRealm(person: BasePerson): PersonRealm {
+            return PersonRealm(
+                person.firstName,
+                person.secondName,
+                person.age
+            )
+        }
 
+        fun toPersonsRealm(persons: List<BasePerson>): List<PersonRealm> {
+            return persons.map {
+                toPersonRealm(it).also { personRealm ->
+                    personRealm.id = PersonRealm.objectCounter
+                }
+            }
+        }
+    }
 }

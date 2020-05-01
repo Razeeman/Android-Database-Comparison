@@ -1,11 +1,12 @@
-package com.example.database.comparison.test
+package com.example.database.comparison.test.old
 
 import com.example.database.comparison.dbms.sqlite.dao.PersonSQLiteDao
 import com.example.database.comparison.dbms.sqlite.model.PersonSQLite
-import com.example.database.comparison.model.Person
+import com.example.database.comparison.model.BasePerson
+import com.example.database.comparison.base.BaseTest
 import com.example.database.comparison.util.DataTransformer
 import com.example.database.comparison.util.Runner
-import java.util.ArrayList
+import java.util.*
 
 class TestSQLiteBatched(private val runner: Runner, private val dao : PersonSQLiteDao)
     : BaseTest {
@@ -14,7 +15,7 @@ class TestSQLiteBatched(private val runner: Runner, private val dao : PersonSQLi
         const val NAME = "SQLiteBatched"
     }
 
-    override fun run(runs: Int, data: List<Person>) {
+    override fun run(runs: Int, data: List<BasePerson>) {
 
         val persons = DataTransformer.toPersonsSQLite(data)
         var reloaded: List<PersonSQLite> = ArrayList()

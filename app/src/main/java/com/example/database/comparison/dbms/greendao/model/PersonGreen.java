@@ -1,15 +1,18 @@
-package com.example.database.comparison.dbms.greendao;
+package com.example.database.comparison.dbms.greendao.model;
+
+import com.example.database.comparison.model.BasePerson;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Property;
-import org.greenrobot.greendao.annotation.Generated;
+import org.jetbrains.annotations.NotNull;
 
 @Entity(nameInDb = "person")
-public class PersonGreen {
+public class PersonGreen implements BasePerson {
 
     @Id(autoincrement = true)
-    private Long id;
+    private Long _id;
 
     @Property(nameInDb = "first_name")
     private String firstName;
@@ -26,9 +29,9 @@ public class PersonGreen {
         this.age = age;
     }
 
-    @Generated(hash = 2003878665)
-    public PersonGreen(Long id, String firstName, String secondName, int age) {
-        this.id = id;
+    @Generated(hash = 1559220051)
+    public PersonGreen(Long _id, String firstName, String secondName, int age) {
+        this._id = _id;
         this.firstName = firstName;
         this.secondName = secondName;
         this.age = age;
@@ -38,36 +41,53 @@ public class PersonGreen {
     public PersonGreen() {
     }
 
-    public Long getId() {
-        return this.id;
+    @Override
+    public long getId() {
+        return _id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public void setId(long id) {
+        _id = id;
     }
 
+    @Override
+    @NotNull
     public String getFirstName() {
         return this.firstName;
     }
 
-    public void setFirstName(String firstName) {
+    @Override
+    public void setFirstName(@NotNull String firstName) {
         this.firstName = firstName;
     }
 
+    @Override
+    @NotNull
     public String getSecondName() {
         return this.secondName;
     }
 
-    public void setSecondName(String secondName) {
+    @Override
+    public void setSecondName(@NotNull String secondName) {
         this.secondName = secondName;
     }
 
+    @Override
     public int getAge() {
         return this.age;
     }
 
+    @Override
     public void setAge(int age) {
         this.age = age;
     }
 
+    public Long get_id() {
+        return this._id;
+    }
+
+    public void set_id(Long _id) {
+        this._id = _id;
+    }
 }

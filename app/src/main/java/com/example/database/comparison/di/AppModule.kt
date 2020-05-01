@@ -5,8 +5,8 @@ import androidx.room.Room
 import com.example.database.comparison.App
 import com.example.database.comparison.dbms.greendao.DaoMaster
 import com.example.database.comparison.dbms.greendao.PersonGreenDao
-import com.example.database.comparison.dbms.objectbox.MyObjectBox
-import com.example.database.comparison.dbms.objectbox.PersonObjectbox
+import com.example.database.comparison.dbms.objectbox.model.MyObjectBox
+import com.example.database.comparison.dbms.objectbox.model.PersonObjectbox
 import com.example.database.comparison.dbms.room.dao.PersonRoomDao
 import com.example.database.comparison.dbms.room.db.AppRoomDatabase
 import com.example.database.comparison.dbms.sqlite.dao.PersonSQLiteDao

@@ -3,16 +3,17 @@ package com.example.database.comparison
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.example.database.comparison.dbms.greendao.PersonGreenDao
-import com.example.database.comparison.dbms.objectbox.PersonObjectbox
-import com.example.database.comparison.dbms.room.dao.PersonRoomDao
-import com.example.database.comparison.dbms.sqlite.dao.PersonSQLiteDao
-import com.example.database.comparison.test.*
+import com.example.database.comparison.dbms.greendao.repo.GreenRepo
+import com.example.database.comparison.dbms.objectbox.repo.ObjectboxRepo
+import com.example.database.comparison.dbms.realm.repo.RealmRepo
+import com.example.database.comparison.dbms.room.repo.RoomRepo
+import com.example.database.comparison.dbms.sqlite.repo.SQLiteBatchedRepo
+import com.example.database.comparison.dbms.sqlite.repo.SQLiteRawRepo
+import com.example.database.comparison.dbms.sqlite.repo.SQLiteRepo
+import com.example.database.comparison.test.Test
 import com.example.database.comparison.util.DataProvider
 import com.example.database.comparison.util.Logger
 import com.example.database.comparison.util.Runner
-import io.objectbox.Box
-import io.realm.Realm
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -25,11 +26,13 @@ class MainActivity : AppCompatActivity() {
         private const val NUMBER_OF_RUNS = 10
     }
 
-    @Inject lateinit var sqliteDao: PersonSQLiteDao
-    @Inject lateinit var greenDao: PersonGreenDao
-    @Inject lateinit var objectboxDao: Box<PersonObjectbox>
-    @Inject lateinit var roomDao: PersonRoomDao
-    @Inject lateinit var realmDao: Realm
+    @Inject lateinit var sqliteRepo: SQLiteRepo
+    @Inject lateinit var sqliteRawRepo: SQLiteRawRepo
+    @Inject lateinit var sqliteBatchedRepo: SQLiteBatchedRepo
+    @Inject lateinit var greenRepo: GreenRepo
+    @Inject lateinit var objectboxRepo: ObjectboxRepo
+    @Inject lateinit var roomRepo: RoomRepo
+    @Inject lateinit var realmRepo: RealmRepo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,13 +49,19 @@ class MainActivity : AppCompatActivity() {
 
         val persons = dataProvider.getPersons(NUMBER_OF_OBJECTS)
 
-        TestSQLite(runner, sqliteDao).run(NUMBER_OF_RUNS, persons)
-        TestSQLiteRaw(runner, sqliteDao).run(NUMBER_OF_RUNS, persons)
-        TestSQLiteBatched(runner, sqliteDao).run(NUMBER_OF_RUNS, persons)
-        TestGreendao(runner, greenDao).run(NUMBER_OF_RUNS, persons)
-        TestObjectbox(runner, objectboxDao).run(NUMBER_OF_RUNS, persons)
-        TestRoom(runner, roomDao).run(NUMBER_OF_RUNS, persons)
-        TestRealm(runner, realmDao).run(NUMBER_OF_RUNS, persons)
+        val repos = listOf(
+            sqliteRepo,
+            sqliteRawRepo,
+            sqliteBatchedRepo,
+            greenRepo,
+            objectboxRepo,
+            roomRepo,
+            realmRepo
+        )
+
+        repos.forEach {
+            Test(runner, it).run(NUMBER_OF_RUNS, persons)
+        }
 
         Log.d(TAG, "Tests are finished")
     }

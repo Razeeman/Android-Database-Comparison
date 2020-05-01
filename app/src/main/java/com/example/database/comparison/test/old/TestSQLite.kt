@@ -1,20 +1,21 @@
-package com.example.database.comparison.test
+package com.example.database.comparison.test.old
 
 import com.example.database.comparison.dbms.sqlite.dao.PersonSQLiteDao
 import com.example.database.comparison.dbms.sqlite.model.PersonSQLite
-import com.example.database.comparison.model.Person
+import com.example.database.comparison.model.BasePerson
+import com.example.database.comparison.base.BaseTest
 import com.example.database.comparison.util.DataTransformer
 import com.example.database.comparison.util.Runner
-import java.util.ArrayList
+import java.util.*
 
-class TestSQLiteRaw(private val runner: Runner, private val dao : PersonSQLiteDao)
+class TestSQLite(private val runner: Runner, private val dao : PersonSQLiteDao)
     : BaseTest {
 
     companion object {
-        const val NAME = "SQLiteRaw"
+        const val NAME = "SQLite"
     }
 
-    override fun run(runs: Int, data: List<Person>) {
+    override fun run(runs: Int, data: List<BasePerson>) {
 
         val persons = DataTransformer.toPersonsSQLite(data)
         var reloaded: List<PersonSQLite> = ArrayList()
@@ -22,13 +23,12 @@ class TestSQLiteRaw(private val runner: Runner, private val dao : PersonSQLiteDa
 
         runner
             .beforeEach { dao.deleteAll() }
-            .run("$NAME-create", runs) { dao.insertRaw(persons) }
+            .run("$NAME-create", runs) { dao.insertInTx(persons) }
 
-        // Read test the same as SQLite.
         runner
             .before {
                 dao.deleteAll()
-                dao.insertRaw(persons)
+                dao.insertInTx(persons)
             }
             .run("$NAME-read", runs) {
                 reloaded = dao.getAll()
@@ -38,19 +38,19 @@ class TestSQLiteRaw(private val runner: Runner, private val dao : PersonSQLiteDa
         runner
             .beforeEach {
                 dao.deleteAll()
-                dao.insertRaw(persons)
+                dao.insertInTx(persons)
                 reloaded = dao.getAll()
                 updated = change(reloaded)
             }
-            .run("$NAME-update", runs) { dao.updateRaw(updated) }
+            .run("$NAME-update", runs) { dao.updateInTx(updated) }
 
         runner
             .beforeEach {
                 dao.deleteAll()
-                dao.insertRaw(persons)
+                dao.insertInTx(persons)
                 reloaded = dao.getAll()
             }
-            .run("$NAME-delete", runs) { dao.deleteRaw(reloaded) }
+            .run("$NAME-delete", runs) { dao.deleteInTx(reloaded) }
     }
 
     private fun access(persons: List<PersonSQLite>) {
