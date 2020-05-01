@@ -2,7 +2,7 @@
 
 Benchmark app to compare speed of CRUD operations of different android database management systems.
 
-Test are executed with a collection of 10000 objects. Execution times are averaged between 100 runs. Tests were run on the emulator.
+Test are executed with a collection of 10000 objects. Execution times are averaged between 10 runs. Tests were run on the Nexus 5X.
 
 - ```create(data: List<T>)``` Inserts list of objects into database.
 
@@ -26,12 +26,12 @@ data class Person (
 
 |Library|create|read|update|delete|
 |:---:|:---:|:---:|:---:|:---:|
-|SQLite|1062|48|1308|1203|
-|GreenDAO|587|24|609|528|
-|Room|582|51|587|490|
-|Realm|81|82|15|25|
-|SQLiteBatched|35|48|44|20|
-|ObjectBox|25|36|27|10|
+|SQLite|926|234|1617|1065|
+|GreenDAO|582|104|698|329|
+|Room|566|204|646|289|
+|Realm|463|328|269|920|
+|SQLiteBatched|233|229|287|93|
+|ObjectBox|129|183|139|63|
 
 <br>
 
